@@ -115,9 +115,74 @@ footer{text-align:center;color:var(--muted);font-size:13px;padding:28px;border-t
 footer small{display:block;margin-top:4px;font-size:12px;opacity:.65}
 @media(max-width:620px){header{padding:0 14px}nav a{padding:8px 8px;font-size:12px}.logo{font-size:20px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.info h2,.info>p,.info .card{opacity:1!important;transform:none!important}}
+
+/* ---- v2: thinking, loaders, icon hovers, decor ---- */
+#pbar{position:fixed;top:0;left:0;width:100%;height:2px;z-index:50;opacity:0;transition:opacity .3s;background:linear-gradient(90deg,transparent,var(--green),transparent) -40% 0/40% 100% no-repeat}
+body.wait #pbar{opacity:1;animation:pb 1.2s linear infinite}
+@keyframes pb{to{background-position:140% 0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.think{display:flex;align-items:center;gap:12px;padding-top:2px}
+.think svg{flex:none;overflow:visible}
+.think .st{stroke:var(--green);stroke-width:1.8;stroke-linecap:round;fill:none;stroke-dasharray:14;animation:stem 2.6s ease-in-out infinite}
+.think .lf{fill:var(--green);opacity:.85;transform:scale(0);animation:grow 2.6s ease-in-out infinite}
+.think .l1{transform-origin:16px 17px}.think .l2{transform-origin:16px 14px;animation-delay:.35s}
+@keyframes stem{0%{stroke-dashoffset:14}30%,80%{stroke-dashoffset:0}100%{stroke-dashoffset:14}}
+@keyframes grow{0%,20%{transform:scale(0)}50%,80%{transform:scale(1)}100%{transform:scale(0)}}
+.tt{background:linear-gradient(90deg,var(--muted) 40%,var(--text) 50%,var(--muted) 60%) 0 0/250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sh 2.2s linear infinite}
+@keyframes sh{to{background-position:-250% 0}}
+#send.ld svg{display:none}
+#send.ld::after{content:"";width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+#prev{height:72px;background:var(--surface2);border-radius:12px}
+#prev.ld img{opacity:0}
+#prev.ld::after{content:"";position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border:2px solid var(--line);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite}
+.ib svg{transition:transform .35s var(--ease)}
+#att:hover svg{transform:rotate(90deg)}
+#send:hover svg{transform:translateY(-2px)}
+.cp:hover svg{animation:wig .5s}
+@keyframes wig{25%{transform:rotate(-12deg) scale(1.15)}75%{transform:rotate(10deg) scale(1.15)}}
+.ic{display:block;width:26px;height:26px;color:var(--green);margin-bottom:12px}
+.card:hover .ic svg{animation:pop .6s var(--ease)}
+@keyframes pop{40%{transform:scale(1.22) rotate(-8deg)}}
+.logo .a{display:inline-block;transition:transform .3s var(--ease)}.logo:hover .a{transform:rotate(-4deg)}
+nav a{position:relative}
+nav a::after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:1px;background:var(--green);transform:scaleX(0);transition:transform .3s var(--ease)}
+nav a:hover::after{transform:scaleX(1)}
+#chat{position:relative;overflow:hidden}
+#chat>*:not(#deco){position:relative;z-index:1}
+#deco{position:absolute;inset:0;pointer-events:none;z-index:0;transition:opacity .35s}
+html body.focus #deco{opacity:1}
+body.focus .ly.br{display:none}
+body.focus .ly.vn{opacity:.28}
+body.focus .ly.bu{opacity:.7}
+body.focus .ly.vn .fl{zoom:.55}
+body.focus .ly.bu .fl{transform:scaleY(.6);transform-origin:50% 100%}
+body.focus .ly.bu{-webkit-mask-image:linear-gradient(90deg,#000 12%,transparent 24%,transparent 76%,#000 88%);mask-image:linear-gradient(90deg,#000 12%,transparent 24%,transparent 76%,#000 88%)}
+body.leaving #deco{opacity:0}
+.ly{position:absolute;will-change:transform}
+.ly svg{display:block}
+.flip{transform:scaleX(-1)}
+.vn{color:#4d7f5b;opacity:.4}.vn svg{transform-origin:50% 0;animation:sway 7s ease-in-out infinite alternate}
+.br{color:#4d7f5b;opacity:.35}.br svg{transform-origin:0 60%;animation:sway 9s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-1.3deg)}to{transform:rotate(1.3deg)}}
+@media(max-width:1280px){.ly.br{display:none}}
+@media(max-width:760px){.ly.vn{display:none}}
+html,#msgs{scrollbar-width:none}
+html::-webkit-scrollbar,#msgs::-webkit-scrollbar{display:none}
+#vein{position:fixed;right:6px;top:70px;bottom:14px;width:30px;z-index:20;touch-action:none;cursor:pointer;transition:opacity .3s}
+body.focus #vein{top:60px}
+#vein.off{opacity:0;pointer-events:none}
+.vt{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;border-radius:2px;background:linear-gradient(transparent,#3f6a4c 8%,#3f6a4c 92%,transparent);opacity:.75}
+.tl{position:absolute;color:#4d7f5b;opacity:.65;pointer-events:none}
+#vthumb{position:absolute;left:0;top:0;width:30px;height:34px;cursor:grab}
+#vthumb svg{display:block;transition:transform .25s var(--ease)}
+#vthumb:hover svg{transform:scale(1.12) rotate(-6deg)}
+#vein.drag #vthumb{cursor:grabbing}
+#vein.drag #vthumb svg{transform:scale(.94)}
 </style>
 </head>
 <body>
+<div id="pbar"></div>
+<div id="vein"><div class="vt"></div><div id="vthumb"><svg width="30" height="34" viewBox="0 0 30 34"><path d="M15 1C26 8 28 20 15 31 2 20 4 8 15 1z" fill="#5f9e6e"/><path d="M15 5V33M15 12l-5 4M15 12l5 4M15 18l-6 5M15 18l6 5" stroke="#2f5e3d" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div></div>
 <header>
   <a class="logo" href="#"><span class="a">Farmer</span><span class="b">Sense</span></a>
   <nav><a href="#about">About us</a><a href="#what-we-do">What we do?</a><a href="#what-we-provide">What we provide?</a></nav>
@@ -128,6 +193,7 @@ footer small{display:block;margin-top:4px;font-size:12px;opacity:.65}
 </div>
 
 <main id="chat">
+  <div id="deco"></div>
   <div class="hero"><h1>Hello, <span>farmer</span></h1><p>Ask me about <span id="tw"></span><span class="caret"></span></p></div>
   <div id="msgs"></div>
   <div class="box">
@@ -216,13 +282,75 @@ const io="IntersectionObserver" in window?new IntersectionObserver(es=>es.forEac
 }),{threshold:[0,.15]}):null;
 document.querySelectorAll(".info").forEach(s=>io?io.observe(s):s.classList.add("in"));
 
+// ---- v2 extras ----
+const THINK='<div class="think"><svg width="30" height="30" viewBox="0 0 32 32"><path class="st" d="M16 29V15"/><path class="lf l1" d="M16 17C16 11 11 8 5 8c0 6 5 9 11 9z"/><path class="lf l2" d="M16 14c0-6 5-9 11-9 0 6-5 9-11 9z"/></svg><span class="tt">Analysing your question…</span></div>';
+const WAIT=["Analysing your question…","Checking crop knowledge…","Looking at soil, pests and weather…","Preparing practical advice…"];
+const ICONS=["M12 21v-8M12 13c0-4 3-6 7-6 0 4-3 6-7 6zM12 15c0-3-2-5-6-5 0 3 2 5 6 5z","M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z","M3 17l6-6 4 4 8-8M15 7h6v6","M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z","M9 8a3 3 0 0 1 6 0v8a3 3 0 0 1-6 0zM4 9l5 2M20 9l-5 2M4 15l5-1M20 15l-5-1M9 5L7 3M15 5l2-2","M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4","M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"];
+document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbegin",'<span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="'+ICONS[i]+'"/></svg></span>'));
+
+// Decorative plants on the landing page, with scroll parallax
+(function(){
+  const NS="http://www.w3.org/2000/svg",LEAF="M0 0C6-5 16-5 24 0C16 5 6 5 0 0Z",FAT="M0 0C8-9 22-9 32 0C22 9 8 9 0 0Z";
+  const mk=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+  let seed=7;const rnd=()=>(seed=seed*16807%2147483647)/2147483647;
+  function stem(g,d,n,sz,w){
+    const p=mk("path",{d,fill:"none",stroke:"currentColor","stroke-width":w,"stroke-linecap":"round"},g),L=p.getTotalLength();
+    for(let i=1;i<=n;i++){const t=L*i/(n+.6),a=p.getPointAtLength(t),b=p.getPointAtLength(t+2),r=Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI;
+      mk("path",{d:LEAF,fill:"currentColor",transform:`translate(${a.x} ${a.y}) rotate(${r+(i%2?42:-42)}) scale(${sz*(1.1-.5*i/n)})`},g)}
+  }
+  const vines=g=>{stem(g,"M40 0C75 90 5 150 45 260S25 350 55 410",9,.7,1.3);stem(g,"M125 0C105 70 160 130 135 205S170 275 150 335",7,.6,1.2);stem(g,"M215 0C200 40 235 80 220 125",4,.5,1.1)};
+  const branches=g=>{stem(g,"M0 160C70 150 140 105 230 95S310 45 330 5",9,.9,1.5);stem(g,"M110 128C150 150 205 162 255 148",5,.8,1.2);stem(g,"M170 108C185 70 225 50 272 48",5,.8,1.2);stem(g,"M230 95C250 125 285 135 320 125",4,.7,1.1)};
+  const bushes=g=>{mk("ellipse",{cx:170,cy:232,rx:190,ry:44,fill:"#14211a"},g);const c=["#1b2e21","#223a29","#2b4a34"];
+    for(let k=0;k<36;k++)mk("path",{d:FAT,fill:c[k%3],transform:`translate(${20+rnd()*300} ${222+rnd()*8}) rotate(${-90+(rnd()-.5)*150}) scale(${1.3+rnd()*1.3})`},g)};
+  function layer(cls,s,css,w,h,draw,flip){
+    const ly=document.createElement("div");ly.className="ly "+cls;ly.dataset.s=s;ly.style.cssText=css;
+    const fl=document.createElement("div");if(flip)fl.className="flip";
+    const svg=mk("svg",{viewBox:"0 0 "+w+" "+h,width:w,height:h});draw(mk("g",{},svg));
+    fl.appendChild(svg);ly.appendChild(fl);$("deco").appendChild(ly);
+  }
+  layer("vn",.3,"left:0;top:0",300,420,vines);layer("vn",.3,"right:0;top:0",300,420,vines,1);
+  layer("br",.5,"left:0;top:36%",340,200,branches);layer("br",.5,"right:0;top:14%",340,200,branches,1);
+  let lys=[];
+  const bottom=()=>{const o=document.querySelector(".ly.bu");if(o)o.remove();const W=innerWidth;
+    layer("bu",.2,"left:0;bottom:-6px",W,230,g=>{seed=11;mk("ellipse",{cx:W/2,cy:238,rx:W*.6,ry:44,fill:"#14211a"},g);const c=["#1b2e21","#223a29","#2b4a34"];
+      for(let k=0;k<W/8;k++)mk("path",{d:FAT,fill:c[k%3],transform:`translate(${rnd()*W} ${222+rnd()*8}) rotate(${-90+(rnd()-.5)*150}) scale(${1.1+rnd()*1.5})`},g)});
+    lys=[...document.querySelectorAll("#deco .ly")]};
+  bottom();
+  const rm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  function par(){if(rm)return;const f=body.classList.contains("focus"),y=f?Math.min(msgs.scrollTop*.1,150):scrollY;
+    lys.forEach(l=>l.style.transform="translate3d(0,"+(y*l.dataset.s).toFixed(1)+"px,0)");
+    $("deco").style.opacity=(f||body.classList.contains("leaving"))?"":Math.max(0,1-scrollY/(innerHeight*.55)).toFixed(2)}
+
+  // Vine "scrollbar": drag the fruit to scroll (wheel / trackpad scrolling works as normal)
+  const vein=$("vein"),th=$("vthumb");let grab=0,drag=false;
+  const sc=()=>body.classList.contains("focus")?msgs:document.scrollingElement;
+  function place(){const e=sc(),max=e.scrollHeight-e.clientHeight,room=vein.clientHeight-th.offsetHeight;
+    vein.classList.toggle("off",max<8);th.style.transform="translateY("+(max>0?Math.min(1,e.scrollTop/max)*room:0)+"px)"}
+  function jump(ev){const e=sc(),max=e.scrollHeight-e.clientHeight,r=vein.getBoundingClientRect(),room=r.height-th.offsetHeight;
+    e.scrollTop=Math.max(0,Math.min(1,(ev.clientY-grab-r.top-th.offsetHeight/2)/room))*max}
+  vein.addEventListener("pointerdown",ev=>{ev.preventDefault();vein.setPointerCapture(ev.pointerId);
+    const t=th.getBoundingClientRect();grab=th.contains(ev.target)?ev.clientY-(t.top+t.height/2):0;
+    drag=true;vein.classList.add("drag");document.documentElement.style.scrollBehavior="auto";jump(ev)});
+  vein.addEventListener("pointermove",ev=>{if(drag)jump(ev)});
+  const end=()=>{drag=false;vein.classList.remove("drag");document.documentElement.style.scrollBehavior=""};
+  vein.addEventListener("pointerup",end);vein.addEventListener("pointercancel",end);
+  function decor(){vein.querySelectorAll(".tl").forEach(n=>n.remove());const n=Math.floor(vein.clientHeight/110);
+    for(let i=0;i<n;i++){const t=48+i*110;vein.insertAdjacentHTML("beforeend",'<svg class="tl" style="top:'+t+'px;'+(i%2?"right:3px;transform:scaleX(-1) rotate(-28deg)":"left:3px;transform:rotate(-28deg)")+'" width="12" height="7" viewBox="0 0 24 10"><path d="M0 5C6 0 16 0 24 5C16 10 6 10 0 5z" fill="currentColor"/></svg>')}}
+  const upd=()=>{par();place()};
+  addEventListener("scroll",upd,{passive:true});msgs.addEventListener("scroll",upd,{passive:true});
+  let rt;addEventListener("resize",()=>{decor();upd();clearTimeout(rt);rt=setTimeout(()=>{bottom();upd()},150)});
+  new MutationObserver(upd).observe(msgs,{childList:true,subtree:true});
+  new MutationObserver(upd).observe(body,{attributes:true,attributeFilter:["class"]});
+  decor();upd();
+})();
+
 inp.addEventListener("input",()=>{inp.style.height="auto";inp.style.height=inp.scrollHeight+"px"});
 inp.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
 sendBtn.onclick=()=>send();
 $("att").onclick=()=>$("file").click();
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{inp.value=c.textContent;send()});
 $("rm").onclick=clearImg;
-function clearImg(){image=null;$("prev").style.display="none";$("file").value=""}
+function clearImg(){image=null;$("prev").style.display="none";$("prev").classList.remove("ld");$("file").value=""}
 
 $("nc").onclick=()=>{
   history=[];msgs.innerHTML="";clearImg();inp.value="";
@@ -254,14 +382,15 @@ document.addEventListener("paste",e=>{
 
 function loadImage(f){
   if(!f||!f.type.startsWith("image/")) return;
+  $("prev").style.display="block";$("prev").classList.add("ld");$("pimg").removeAttribute("src");
   const r=new FileReader();
   r.onload=()=>{const im=new Image();im.onload=()=>{
     const s=Math.min(1,1024/Math.max(im.width,im.height));
     const c=document.createElement("canvas");c.width=im.width*s;c.height=im.height*s;
     c.getContext("2d").drawImage(im,0,0,c.width,c.height);
     image=c.toDataURL("image/jpeg",.85);
-    $("pimg").src=image;$("prev").style.display="block";
-  };im.src=r.result};
+    $("pimg").src=image;$("prev").classList.remove("ld");
+  };im.onerror=clearImg;im.src=r.result};
   r.readAsDataURL(f);
 }
 
@@ -285,7 +414,7 @@ function add(role,html,raw){
 async function send(){
   const text=inp.value.trim();
   if((!text&&!image)||busy) return;
-  busy=true;sendBtn.disabled=true;
+  busy=true;sendBtn.disabled=true;sendBtn.classList.add("ld");body.classList.add("wait");
   if(!chat.classList.contains("started")){
     // transition to chat-only view
     body.classList.add("leaving");
@@ -298,8 +427,10 @@ async function send(){
   const content=img?[{type:"text",text:text||"Please check this plant/crop photo."},{type:"image_url",image_url:{url:img}}]:text;
   history.push({role:"user",content});
   inp.value="";inp.style.height="auto";clearImg();
-  const out=add("bot",'<div class="dots"><span></span><span></span><span></span></div>');
-  const bub=out.querySelector(".bub");
+  const out=add("bot",THINK);
+  const bub=out.querySelector(".bub"),tt=out.querySelector(".tt");let wi=0;
+  if(img) tt.textContent="Examining your photo…";
+  const iv=setInterval(()=>{wi=(wi+1)%WAIT.length;if(tt.isConnected)tt.textContent=WAIT[wi]},2300);
   try{
     let reply=null,lastErr="No response";
     for(const model of MODELS){
@@ -324,6 +455,7 @@ async function send(){
     history.pop();
     bub.innerHTML='<span style="color:#d98b7a">Something went wrong: '+String(err.message).replace(/</g,"&lt;")+'. The free model may be busy, please try again shortly.</span>';
   }
+  clearInterval(iv);sendBtn.classList.remove("ld");body.classList.remove("wait");
   busy=false;sendBtn.disabled=false;msgs.scrollTop=msgs.scrollHeight;inp.focus();
 }
 </script>
