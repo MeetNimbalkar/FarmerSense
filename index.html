@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FarmerSense – Smart Crop Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@600;700&family=Fraunces:ital,wght@1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e1210;--surface:#161c18;--surface2:#1d2520;--line:#26302a;--text:#e6ebe7;--muted:#8b998f;--green:#5f9e6e;--green-d:#3f7a50;--ease:cubic-bezier(.22,.8,.3,1)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6}
+@keyframes up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes blink{50%{opacity:0}}
+
+header{position:sticky;top:0;z-index:10;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(14,18,16,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);transition:transform .45s var(--ease),opacity .4s;animation:fade .8s}
+.logo{display:flex;align-items:baseline;text-decoration:none;color:var(--text);font-size:24px;letter-spacing:-.3px}
+.logo .a{font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:600;color:var(--green)}
+.logo .b{font-weight:600}
+nav{display:flex;gap:6px}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;padding:8px 14px;border-radius:8px;transition:color .2s,background .2s}
+nav a:hover{color:var(--text);background:var(--surface)}
+
+#chat{height:calc(100vh - 64px);min-height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 20px}
+.hero{text-align:center;margin-bottom:28px;animation:up .8s var(--ease) both;transition:opacity .35s,transform .35s}
+.hero h1{font-weight:600;font-size:clamp(30px,5vw,44px);letter-spacing:-.8px}
+.hero h1 span{font-family:"Dancing Script","Brush Script MT",cursive;font-weight:700;font-size:1.3em;letter-spacing:0;color:var(--green)}
+.hero p{color:var(--muted);margin-top:10px;min-height:27px}
+#tw{color:var(--text)}
+.caret{display:inline-block;width:2px;height:1.05em;background:var(--green);margin-left:2px;vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+.box,.chips,.note{animation:up .8s var(--ease) both}
+.box{animation-delay:.15s}.chips{animation-delay:.3s}
+.chips,.note{transition:opacity .35s}
+body.leaving .hero,body.leaving .chips{opacity:0;transform:translateY(-10px)}
+body.leaving header{transform:translateY(-100%);opacity:0}
+body.leaving .info,body.leaving footer{opacity:0;transition:opacity .3s}
+
+/* focus (chat-only) mode */
+#bar{display:none;position:fixed;top:0;left:0;right:0;height:56px;padding:0 24px;align-items:center;justify-content:space-between;z-index:5;background:linear-gradient(var(--bg) 60%,transparent)}
+#bar .logo{font-size:21px}
+#nc{background:none;border:1px solid var(--line);color:var(--muted);padding:7px 14px;border-radius:999px;font:inherit;font-size:13px;cursor:pointer;transition:.2s}
+#nc:hover{color:var(--text);background:var(--surface)}
+body.focus{overflow:hidden}
+body.focus header,body.focus .info,body.focus footer{display:none}
+body.focus #bar{display:flex;animation:fade .6s}
+body.focus #chat{height:100vh;height:100dvh;padding-top:56px;justify-content:flex-end}
+#chat.started .hero,#chat.started .chips{display:none}
+#msgs{display:none;align-self:stretch;margin:0 -20px;flex:1;overflow-y:auto;padding:24px max(20px,calc((100% - 820px)/2)) 12px;scrollbar-width:thin;scrollbar-color:#34423a transparent}
+#chat.started #msgs{display:block}
+
+.m{display:flex;gap:14px;margin-bottom:26px;animation:up .4s var(--ease) both}
+.m.u{justify-content:flex-end}
+.col{flex:1;min-width:0}
+.m.u .col{flex:none;display:flex;flex-direction:column;align-items:flex-end;max-width:80%}
+.m.u .bub{background:var(--surface2);padding:10px 16px;border-radius:18px}
+.m.u img{display:block;max-width:220px;border-radius:12px;margin-bottom:8px}
+.av{flex:none;width:30px;height:30px;border-radius:50%;background:var(--green-d);display:grid;place-items:center;font-weight:600;font-size:13px}
+.m.b .bub{padding-top:3px;overflow-wrap:anywhere}
+.bub h3,.bub h4{font-size:16px;margin:12px 0 4px;color:var(--green)}
+.bub ul{margin:6px 0 6px 22px}
+.bub li{margin:3px 0}
+.cp{display:flex;align-items:center;gap:6px;margin-top:6px;background:none;border:none;color:var(--muted);font:inherit;font-size:12px;padding:4px 8px;border-radius:8px;cursor:pointer;opacity:0;transition:opacity .2s,background .2s,color .2s}
+.m:hover .cp,.cp:focus-visible{opacity:1}
+@media(hover:none){.cp{opacity:1}}
+.cp:hover{background:var(--surface);color:var(--text)}
+.cp.ok{color:var(--green);opacity:1}
+.m.b .cp{display:none;margin-left:-8px}.m.b.done .cp{display:flex}
+.dots span{display:inline-block;width:7px;height:7px;margin-right:4px;border-radius:50%;background:var(--muted);animation:bl 1.2s infinite}
+.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,80%,100%{opacity:.25}40%{opacity:1}}
+
+.box{width:100%;max-width:860px;background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:12px 14px 10px;transition:border-color .25s,box-shadow .25s}
+.box:focus-within{border-color:#3a4a40}
+#prev{display:none;position:relative;width:72px;margin:0 0 10px 4px;animation:up .3s var(--ease)}
+#prev img{width:72px;height:72px;object-fit:cover;border-radius:12px;display:block}
+#prev button{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;border:none;background:var(--text);color:var(--bg);cursor:pointer;font-size:13px;line-height:20px}
+textarea{width:100%;background:none;border:none;outline:none;resize:none;color:var(--text);font:inherit;font-size:16px;max-height:160px;padding:4px 6px}
+textarea::placeholder{color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.ib{width:36px;height:36px;border-radius:50%;border:none;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;transition:background .2s,color .2s,transform .2s}
+.ib:hover{background:var(--surface2);color:var(--text)}
+.ib:active{transform:scale(.92)}
+#send{background:var(--green-d);color:#fff}
+#send:hover{background:var(--green)}
+#send:disabled{opacity:.4;cursor:default}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:860px;margin-top:22px}
+.chip{background:none;border:1px solid var(--line);color:var(--muted);padding:9px 16px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer;transition:color .2s,background .2s,transform .2s}
+.chip:hover{color:var(--text);background:var(--surface);transform:translateY(-2px)}
+.note{font-size:12px;color:var(--muted);text-align:center;padding:10px 0 14px}
+#chat:not(.started) .note{display:none}
+
+section.info{max-width:1000px;margin:0 auto;padding:90px 24px;border-top:1px solid var(--line);overflow:hidden}
+section.info h2{font-family:"Bebas Neue",Impact,"Arial Narrow",sans-serif;font-weight:400;font-size:clamp(42px,6vw,62px);line-height:1.05;text-transform:uppercase;letter-spacing:3px;margin-bottom:16px}
+/* scroll reveal: headings slide in from alternating sides, text fades up, cards rise in turn */
+.info h2,.info>p,.info .card{opacity:0;transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.info h2{transform:translateX(-80px)}
+#what-we-do h2{transform:translateX(80px)}
+#what-we-do.in h2{transform:none}
+.info>p{transform:translateY(22px);transition-delay:.15s}
+.info .card{transform:translateY(44px)}
+.info.in h2,.info.in>p,.info.in .card{opacity:1;transform:none}
+.info.in .card:nth-child(1){transition-delay:.3s}.info.in .card:nth-child(2){transition-delay:.45s}.info.in .card:nth-child(3){transition-delay:.6s}.info.in .card:nth-child(4){transition-delay:.75s}
+.info.settled .card{transition:transform .3s var(--ease),border-color .3s;transition-delay:0s}
+.info.settled .card:hover{transform:translateY(-4px);border-color:#34423a}
+section.info h2 span{color:var(--green)}
+section.info>p{color:var(--muted);max-width:680px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:30px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;transition:transform .3s var(--ease),border-color .3s}
+.card:hover{transform:translateY(-4px);border-color:#34423a}
+.card h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.card p{color:var(--muted);font-size:14px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:28px;border-top:1px solid var(--line)}
+footer small{display:block;margin-top:4px;font-size:12px;opacity:.65}
+@media(max-width:620px){header{padding:0 14px}nav a{padding:8px 8px;font-size:12px}.logo{font-size:20px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.info h2,.info>p,.info .card{opacity:1!important;transform:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <a class="logo" href="#"><span class="a">Farmer</span><span class="b">Sense</span></a>
+  <nav><a href="#about">About us</a><a href="#what-we-do">What we do?</a><a href="#what-we-provide">What we provide?</a></nav>
+</header>
+<div id="bar">
+  <a class="logo" href="#" onclick="return false"><span class="a">Farmer</span><span class="b">Sense</span></a>
+  <button id="nc">+ New chat</button>
+</div>
+
+<main id="chat">
+  <div class="hero"><h1>Hello, <span>farmer</span></h1><p>Ask me about <span id="tw"></span><span class="caret"></span></p></div>
+  <div id="msgs"></div>
+  <div class="box">
+    <div id="prev"><img id="pimg" alt=""><button id="rm" title="Remove">×</button></div>
+    <textarea id="inp" rows="1" placeholder="Ask about crops, pests, diseases, soil…"></textarea>
+    <div class="row">
+      <button class="ib" id="att" title="Add a photo of your crop"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      <input type="file" id="file" accept="image/*" hidden>
+      <button class="ib" id="send" title="Send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+    </div>
+  </div>
+  <div class="chips">
+    <button class="chip">Yellow spots on my wheat leaves</button>
+    <button class="chip">Organic pest control for cotton</button>
+    <button class="chip">How to improve soil health?</button>
+    <button class="chip">Plan irrigation for tomatoes</button>
+  </div>
+  <p class="note">AI can make mistakes. For serious crop loss, consult a local agriculture expert.</p>
+</main>
+
+<section class="info" id="about">
+  <h2>About <span>us</span></h2>
+  <p>FarmerSense is an AI assistant built for farmers. We bring expert-level crop guidance to anyone with a phone, in simple language, whenever it is needed.</p>
+</section>
+<section class="info" id="what-we-do">
+  <h2>What we <span>do?</span></h2>
+  <p>We help you spot problems early and act on them, so you lose less and grow more.</p>
+  <div class="grid">
+    <div class="card"><h3>Track crops</h3><p>Follow growth stages and care schedules from sowing to harvest.</p></div>
+    <div class="card"><h3>Protect plant health</h3><p>Identify pests, diseases and nutrient deficiencies, including from photos.</p></div>
+    <div class="card"><h3>Improve productivity</h3><p>Practical advice on soil, water, fertiliser and timing.</p></div>
+  </div>
+</section>
+<section class="info" id="what-we-provide">
+  <h2>What we <span>provide?</span></h2>
+  <div class="grid">
+    <div class="card"><h3>Image diagnosis</h3><p>Upload a leaf or plant photo for a likely cause and next steps.</p></div>
+    <div class="card"><h3>Pest &amp; disease control</h3><p>Organic and chemical options with safe usage guidance.</p></div>
+    <div class="card"><h3>Crop management</h3><p>Irrigation, fertilising, weather and seasonal planning tips.</p></div>
+    <div class="card"><h3>24/7 answers</h3><p>Ask anything, anytime, in your own words.</p></div>
+  </div>
+</section>
+<footer>© 2026 FarmerSense. Built for farmers.<small>Developed by Meet Nimbalkar</small></footer>
+
+<script>
+// ---- CONFIG ----
+const API_KEY = "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";
+// Tried in order; if one fails (busy / provider error) the next is used automatically.
+const MODELS = ["dots-studio/dots-3-note-preview:free","google/gemma-4-26b-a4b-it:free"];
+const SYSTEM = "You are FarmerSense, a friendly expert agricultural assistant for farmers. Help with crop tracking, plant health, crop management, irrigation, soil and fertiliser, pest control, disease control, weather and other factors affecting crops, and increasing productivity. Use simple, practical language. When a photo is provided, describe what you see, give the most likely causes, and suggest clear next steps (organic options first, then chemical with safety notes). Ask for the crop, location, growth stage or symptoms if needed. Keep answers concise and well structured. Reply in the language the farmer uses. For serious problems, advise consulting a local agriculture officer. If anyone asks who created, built, developed or made you, always answer that you were created by a team: Meet Nimbalkar is the main and lead developer (integrating the database and designs, and managing the API); Vedant Patel is the frontend and database developer (found the best LLM to solve the problem); and Nisrag Patel is the design and elemental developer (transitions, animations and theme). Mention the lead developer first and keep the answer short and friendly.";
+// ----------------
+const $ = id => document.getElementById(id);
+const body=document.body, chat=$("chat"), msgs=$("msgs"), inp=$("inp"), sendBtn=$("send");
+let image=null, busy=false, history=[];
+const COPY='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+const CHECK='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
+
+// Instructions are folded into the first user message (some free providers reject the "system" role).
+function buildMsgs(){
+  const m=history.map(x=>({...x})), f=m[0], pre=SYSTEM+"\n\n---\nFarmer's message:\n";
+  f.content=typeof f.content==="string"?pre+f.content:[{...f.content[0],text:pre+f.content[0].text},...f.content.slice(1)];
+  return m;
+}
+
+// Typing / backspace animation on the landing page
+const phrases=["crop diseases","pest control","soil health","irrigation planning","fertiliser use","higher yields"];
+let pi=0,ci=0,del=false,tw;
+function type(){
+  if(body.classList.contains("focus")) return;
+  const p=phrases[pi]; ci+=del?-1:1; $("tw").textContent=p.slice(0,ci);
+  let t=del?35:75;
+  if(!del&&ci===p.length){del=true;t=1500}else if(del&&ci===0){del=false;pi=(pi+1)%phrases.length;t=400}
+  tw=setTimeout(type,t);
+}
+type();
+
+// Scroll reveal
+const io="IntersectionObserver" in window?new IntersectionObserver(es=>es.forEach(e=>{
+  const t=e.target;
+  if(e.intersectionRatio>=.15){
+    t.classList.add("in");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.add("settled"),1800);
+  }else if(!e.isIntersecting){ // fully out of view: reset so it animates again
+    clearTimeout(t._t);t.classList.remove("in","settled");
+  }
+}),{threshold:[0,.15]}):null;
+document.querySelectorAll(".info").forEach(s=>io?io.observe(s):s.classList.add("in"));
+
+inp.addEventListener("input",()=>{inp.style.height="auto";inp.style.height=inp.scrollHeight+"px"});
+inp.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
+sendBtn.onclick=()=>send();
+$("att").onclick=()=>$("file").click();
+document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{inp.value=c.textContent;send()});
+$("rm").onclick=clearImg;
+function clearImg(){image=null;$("prev").style.display="none";$("file").value=""}
+
+$("nc").onclick=()=>{
+  history=[];msgs.innerHTML="";clearImg();inp.value="";
+  body.classList.remove("focus","leaving");chat.classList.remove("started");
+  window.scrollTo(0,0);clearTimeout(tw);type();
+};
+
+// Copy button (works for both user and bot messages)
+msgs.addEventListener("click",e=>{
+  const b=e.target.closest(".cp"); if(!b) return;
+  const text=b.closest(".m")._raw||"";
+  const done=()=>{b.classList.add("ok");b.innerHTML=CHECK+"Copied";setTimeout(()=>{b.classList.remove("ok");b.innerHTML=COPY+"Copy"},1600)};
+  if(navigator.clipboard&&window.isSecureContext) navigator.clipboard.writeText(text).then(done,fallback);
+  else fallback();
+  function fallback(){const t=document.createElement("textarea");t.value=text;t.style.position="fixed";t.style.opacity="0";document.body.appendChild(t);t.select();try{document.execCommand("copy");done()}catch(_){}t.remove()}
+});
+
+$("file").onchange=e=>loadImage(e.target.files[0]);
+
+// Paste an image (screenshot or copied picture) straight into the chat
+document.addEventListener("paste",e=>{
+  const items=(e.clipboardData&&e.clipboardData.items)||[];
+  for(const it of items){
+    if(it.kind==="file"&&it.type.startsWith("image/")){
+      e.preventDefault();loadImage(it.getAsFile());inp.focus();return;
+    }
+  }
+});
+
+function loadImage(f){
+  if(!f||!f.type.startsWith("image/")) return;
+  const r=new FileReader();
+  r.onload=()=>{const im=new Image();im.onload=()=>{
+    const s=Math.min(1,1024/Math.max(im.width,im.height));
+    const c=document.createElement("canvas");c.width=im.width*s;c.height=im.height*s;
+    c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+    image=c.toDataURL("image/jpeg",.85);
+    $("pimg").src=image;$("prev").style.display="block";
+  };im.src=r.result};
+  r.readAsDataURL(f);
+}
+
+function md(s){
+  s=s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  s=s.replace(/^#{1,2} (.*)\n?/gm,"<h3>$1</h3>").replace(/^### (.*)\n?/gm,"<h4>$1</h4>")
+   .replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")
+   .replace(/^\s*(?:[-*•]|\d+\.) (.*)$/gm,"<li>$1</li>")
+   .replace(/(?:<li>.*<\/li>\n?)+/g,m=>"<ul>"+m.replace(/\n/g,"")+"</ul>")
+   .replace(/\n{2,}/g,"<br><br>").replace(/\n/g,"<br>");
+  return s;
+}
+
+function add(role,html,raw){
+  const d=document.createElement("div");d.className="m "+(role==="user"?"u":"b");
+  d._raw=raw||"";
+  d.innerHTML=(role==="user"?"":'<div class="av">F</div>')+'<div class="col"><div class="bub">'+html+'</div><button class="cp" title="Copy message">'+COPY+'Copy</button></div>';
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d;
+}
+
+async function send(){
+  const text=inp.value.trim();
+  if((!text&&!image)||busy) return;
+  busy=true;sendBtn.disabled=true;
+  if(!chat.classList.contains("started")){
+    // transition to chat-only view
+    body.classList.add("leaving");
+    await new Promise(r=>setTimeout(r,380));
+    window.scrollTo(0,0);
+    body.classList.add("focus");chat.classList.add("started");
+  }
+  const img=image;
+  add("user",(img?'<img src="'+img+'">':"")+md(text||"Please check this photo."),text);
+  const content=img?[{type:"text",text:text||"Please check this plant/crop photo."},{type:"image_url",image_url:{url:img}}]:text;
+  history.push({role:"user",content});
+  inp.value="";inp.style.height="auto";clearImg();
+  const out=add("bot",'<div class="dots"><span></span><span></span><span></span></div>');
+  const bub=out.querySelector(".bub");
+  try{
+    let reply=null,lastErr="No response";
+    for(const model of MODELS){
+      try{
+        const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
+          method:"POST",
+          headers:{"Authorization":"Bearer "+API_KEY,"Content-Type":"application/json","HTTP-Referer":location.href.startsWith("http")?location.origin:"https://farmersense.local","X-Title":"FarmerSense"},
+          body:JSON.stringify({model,messages:buildMsgs()})
+        });
+        const data=await res.json();
+        const c=data.choices&&data.choices[0]&&data.choices[0].message&&data.choices[0].message.content;
+        if(res.ok&&c){reply=c;break}
+        lastErr=(data.error&&data.error.message)||("Error "+res.status);
+      }catch(e){lastErr=e.message}
+    }
+    if(!reply) throw new Error(lastErr);
+    bub.innerHTML=md(reply);out._raw=reply;out.classList.add("done");
+    // keep history light: drop the image from past turns
+    if(img) history[history.length-1].content=(text||"Please check this photo.")+" [photo was shared]";
+    history.push({role:"assistant",content:reply});
+  }catch(err){
+    history.pop();
+    bub.innerHTML='<span style="color:#d98b7a">Something went wrong: '+String(err.message).replace(/</g,"&lt;")+'. The free model may be busy, please try again shortly.</span>';
+  }
+  busy=false;sendBtn.disabled=false;msgs.scrollTop=msgs.scrollHeight;inp.focus();
+}
+</script>
+</body>
+</html>
