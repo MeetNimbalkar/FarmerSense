@@ -174,7 +174,8 @@ footer small{display:block;margin-top:4px;font-size:12px;opacity:.65}
 
 <script>
 // ---- CONFIG ----
-const API_KEY = "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";
+// Address of your Cloudflare Worker (the key is stored there, not in this file)
+const API_URL = "https://farmersense.meetnimbalkar.workers.dev";
 // Tried in order; if one fails (busy / provider error) the next is used automatically.
 const MODELS = ["dots-studio/dots-3-note-preview:free","google/gemma-4-26b-a4b-it:free"];
 const SYSTEM = "You are FarmerSense, a friendly expert agricultural assistant for farmers. Help with crop tracking, plant health, crop management, irrigation, soil and fertiliser, pest control, disease control, weather and other factors affecting crops, and increasing productivity. Use simple, practical language. When a photo is provided, describe what you see, give the most likely causes, and suggest clear next steps (organic options first, then chemical with safety notes). Ask for the crop, location, growth stage or symptoms if needed. Keep answers concise and well structured. Reply in the language the farmer uses. For serious problems, advise consulting a local agriculture officer. If anyone asks who created, built, developed or made you, always answer that you were created by a team: Meet Nimbalkar is the main and lead developer (integrating the database and designs, and managing the API); Vedant Patel is the frontend and database developer (found the best LLM to solve the problem); and Nisrag Patel is the design and elemental developer (transitions, animations and theme). Mention the lead developer first and keep the answer short and friendly.";
@@ -303,9 +304,9 @@ async function send(){
     let reply=null,lastErr="No response";
     for(const model of MODELS){
       try{
-        const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
+        const res=await fetch(API_URL,{
           method:"POST",
-          headers:{"Authorization":"Bearer "+API_KEY,"Content-Type":"application/json","HTTP-Referer":location.href.startsWith("http")?location.origin:"https://farmersense.local","X-Title":"FarmerSense"},
+          headers:{"Content-Type":"application/json"},
           body:JSON.stringify({model,messages:buildMsgs()})
         });
         const data=await res.json();
