@@ -118,7 +118,7 @@ section.info>p{color:var(--muted);max-width:680px}
 footer{text-align:center;color:var(--muted);font-size:13px;padding:28px;border-top:1px solid var(--line)}
 footer small{display:block;margin-top:4px;font-size:12px;opacity:.65}
 @media(max-width:620px){header{padding:0 14px}nav a{padding:8px 8px;font-size:12px}.logo{font-size:20px}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.info h2,.info>p,.info .card{opacity:1!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.info h2,.info>p,.info .card,.info .reg{opacity:1!important;transform:none!important}}
 
 /* ---- v2: thinking, loaders, icon hovers, decor ---- */
 #pbar{position:fixed;top:0;left:0;width:100%;height:2px;z-index:50;opacity:0;transition:opacity .3s;background:linear-gradient(90deg,transparent,var(--green),transparent) -40% 0/40% 100% no-repeat}
@@ -224,6 +224,19 @@ section.info{position:relative}
 .hv{transform:translateY(-130px);opacity:0;transition:transform .8s cubic-bezier(.5,0,.6,1.35),opacity .25s}
 .info.in .hv{transform:none;opacity:1}
 @media(max-width:980px){.sd{display:none}}
+.reg{margin-top:28px;max-width:660px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fg label{font-size:13px;color:var(--muted)}.fg i{opacity:.7;font-style:normal}
+.fg input{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--text);font:inherit;font-size:15px;outline:none;transition:border-color .2s}
+.fg input:focus{border-color:#3a4a40}.fg input.bad{border-color:#a65c45}
+.hp{position:absolute;left:-9999px;opacity:0}
+.rb{grid-column:1/-1;justify-self:start;display:flex;align-items:center;gap:10px;background:var(--green-d);color:#fff;border:none;border-radius:999px;padding:12px 30px;font:inherit;font-weight:500;cursor:pointer;transition:background .2s,transform .2s}
+.rb:hover{background:var(--green);transform:translateY(-1px)}.rb:disabled{opacity:.65;cursor:default;transform:none}
+.rb.ld::before{content:"";width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+.rm{grid-column:1/-1;font-size:14px;min-height:20px;margin:0}.rm.ok{color:var(--green)}.rm.err{color:#d9a58f}
+.info .reg{opacity:0;transform:translateY(40px);transition:opacity .9s var(--ease) .15s,transform .9s var(--ease) .15s}
+.info.in .reg{opacity:1;transform:none}
+@media(max-width:620px){.reg{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -282,6 +295,19 @@ section.info{position:relative}
     <div class="card"><h3>Crop management</h3><p>Irrigation, fertilising, weather and seasonal planning tips.</p></div>
     <div class="card"><h3>24/7 answers</h3><p>Ask anything, anytime, in your own words.</p></div>
   </div>
+</section>
+<section class="info" id="register">
+  <h2>Register <span>now</span></h2>
+  <p>Join FarmerSense and we'll send a confirmation straight to your inbox.</p>
+  <form class="reg" id="regForm" novalidate>
+    <div class="fg"><label for="rn">Full name</label><input id="rn" name="name" required autocomplete="name" placeholder="Your name"></div>
+    <div class="fg"><label for="re">Email</label><input id="re" name="email" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+    <div class="fg"><label for="rl">Village / City <i>(optional)</i></label><input id="rl" name="location" autocomplete="address-level2" placeholder="Where is your farm?"></div>
+    <div class="fg"><label for="rc">Main crops <i>(optional)</i></label><input id="rc" name="crops" placeholder="e.g. Wheat, cotton"></div>
+    <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <button class="rb" id="rbtn" type="submit"><span>Register</span></button>
+    <p class="rm" id="rmsg" role="status"></p>
+  </form>
 </section>
 <footer>© 2026 FarmerSense. Built for farmers.<small>Developed by Meet Nimbalkar</small></footer>
 
@@ -444,6 +470,30 @@ document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbeg
   new MutationObserver(upd).observe(body,{attributes:true,attributeFilter:["class"]});
   decor();upd();
 })();
+
+// Registration form: sends a confirmation email through EmailJS
+// Fill in your EmailJS Template ID and Public Key below (the service ID is already set).
+const EJ={service:"service_xlxh7dk",template:"template_8z74q1a",key:"vWzSiB-MVagcoQD_Q"};
+const rf=$("regForm"),rbtn=$("rbtn"),rmsg=$("rmsg");
+rf.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const f=new FormData(rf),name=(f.get("name")||"").trim(),email=(f.get("email")||"").trim();
+  const say=(t,c)=>{rmsg.textContent=t;rmsg.className="rm "+(c||"")};
+  rf.querySelectorAll("input").forEach(i=>i.classList.remove("bad"));
+  if(f.get("website")) return; // hidden field: only bots fill it
+  if(!name){$("rn").classList.add("bad");return say("Please enter your name.","err")}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){$("re").classList.add("bad");return say("Please enter a valid email address.","err")}
+  if(/PASTE_/.test(EJ.template+EJ.key)) return say("Registration is not set up yet.","err");
+  rbtn.disabled=true;rbtn.classList.add("ld");say("Sending your confirmation…");
+  try{
+    const r=await fetch("https://api.emailjs.com/api/v1.0/email/send",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({service_id:EJ.service,template_id:EJ.template,user_id:EJ.key,
+        template_params:{name,email,location:(f.get("location")||"").trim(),crops:(f.get("crops")||"").trim()}})});
+    if(!r.ok) throw new Error(await r.text());
+    rf.reset();say("Thank you for registering! A confirmation email is on its way to "+email+".","ok");
+  }catch(err){console.error(err);say("Sorry, we couldn't send the confirmation right now. Please try again later.","err")}
+  rbtn.disabled=false;rbtn.classList.remove("ld");
+});
 
 inp.addEventListener("input",()=>{inp.style.height="auto";inp.style.height=inp.scrollHeight+"px"});
 inp.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
