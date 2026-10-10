@@ -213,7 +213,7 @@ body.focus #vein{top:60px}
 <div id="pbar"></div>
 <div id="vein"><div class="vt"></div><div id="vthumb"><svg width="30" height="34" viewBox="0 0 30 34"><path d="M15 1C26 8 28 20 15 31 2 20 4 8 15 1z" fill="#5f9e6e"/><path d="M15 5V33M15 12l-5 4M15 12l5 4M15 18l-6 5M15 18l6 5" stroke="#2f5e3d" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div></div>
 <header>
-  <a class="logo" href="#"><span class="a">Farmer</span><span class="b">Sense</span><img class="lg" src="logo.png" alt="" onerror="this.style.display='none'"></a>
+  <a class="logo" href="#"><span class="a">Farmer</span><span class="b">Sense</span><img class="lg" src="logonew.png" alt="" onerror="this.style.display='none'"></a>
   <nav><a href="#about">About us</a><a href="#what-we-do">What we do?</a><a href="#what-we-provide">What we provide?</a></nav>
 </header>
 <div id="bar">
@@ -314,7 +314,7 @@ document.querySelectorAll(".info").forEach(s=>io?io.observe(s):s.classList.add("
 
 // ---- v2 extras ----
 const THINK='<div class="think"><svg width="30" height="30" viewBox="0 0 32 32"><path class="st" d="M16 29V15"/><path class="lf l1" d="M16 17C16 11 11 8 5 8c0 6 5 9 11 9z"/><path class="lf l2" d="M16 14c0-6 5-9 11-9 0 6-5 9-11 9z"/></svg><span class="tt">Analysing your question…</span></div>';
-const AV='<div class="av"><img src="logo.png" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><svg style="display:none" viewBox="0 0 24 24" fill="none" stroke="#e6f2e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-9"/><path d="M12 12c0-4 3-6.5 7-6.5 0 4-3 6.5-7 6.5z"/><path d="M12 15c0-3-2.5-5-6-5 0 3 2.5 5 6 5z"/></svg></div>';
+const AV='<div class="av"><img src="logonew.png" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><svg style="display:none" viewBox="0 0 24 24" fill="none" stroke="#e6f2e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-9"/><path d="M12 12c0-4 3-6.5 7-6.5 0 4-3 6.5-7 6.5z"/><path d="M12 15c0-3-2.5-5-6-5 0 3 2.5 5 6 5z"/></svg></div>';
 const WAIT=["Analysing your question…","Checking crop knowledge…","Looking at soil, pests and weather…","Preparing practical advice…"];
 const ICONS=["M12 21v-8M12 13c0-4 3-6 7-6 0 4-3 6-7 6zM12 15c0-3-2-5-6-5 0 3 2 5 6 5z","M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z","M3 17l6-6 4 4 8-8M15 7h6v6","M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z","M9 8a3 3 0 0 1 6 0v8a3 3 0 0 1-6 0zM4 9l5 2M20 9l-5 2M4 15l5-1M20 15l-5-1M9 5L7 3M15 5l2-2","M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4","M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"];
 document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbegin",'<span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="'+ICONS[i]+'"/></svg></span>'));
