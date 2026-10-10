@@ -108,7 +108,7 @@ section.info h2{font-family:"Bebas Neue",Impact,"Arial Narrow",sans-serif;font-w
 .info.in .card:nth-child(1){transition-delay:.3s}.info.in .card:nth-child(2){transition-delay:.45s}.info.in .card:nth-child(3){transition-delay:.6s}.info.in .card:nth-child(4){transition-delay:.75s}
 .info.settled .card{transition:transform .3s var(--ease),border-color .3s;transition-delay:0s}
 .info.settled .card:hover{transform:translateY(-4px);border-color:#34423a}
-section.info h2 span{color:var(--green)}
+section.info h2 span:not(.lt){color:var(--green)}
 section.info>p{color:var(--muted);max-width:680px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:30px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;transition:transform .3s var(--ease),border-color .3s}
@@ -238,9 +238,81 @@ section.info{position:relative}
 .info.in .reg{opacity:1;transform:none}
 @media(max-width:620px){.reg{grid-template-columns:1fr}}
 #chat,section.info{transform-origin:50% 50%;will-change:transform}
+section.info{border-top:0}
+.dvd{position:absolute;top:0;left:50%;margin-left:-500px;width:1000px;height:40px;pointer-events:none;color:#4d7f5b;opacity:.8}
+.dvd svg{display:block;overflow:visible}
+.bud{transform:scale(0);transform-origin:500px 20px;transition:transform .6s cubic-bezier(.3,1.6,.5,1)}
+.info.in .bud{transform:scale(1)}
+.lt{display:inline-block;opacity:0;transform:perspective(500px) rotateX(-95deg) translateY(24px);transform-origin:50% 100%;transition:transform .85s cubic-bezier(.3,1.4,.5,1),opacity .5s;transition-delay:calc(var(--i)*45ms + .2s)}
+.info.in .lt{opacity:1;transform:none}
+#fall{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+body.focus #fall{display:none}
+.fl2{position:absolute;top:-40px;animation:fallA linear infinite}
+.fl2 svg{display:block;animation:swayB ease-in-out infinite alternate}
+@keyframes fallA{from{transform:translateY(0)}to{transform:translateY(calc(100vh + 80px))}}
+@keyframes swayB{from{transform:translateX(-26px) rotate(-35deg)}to{transform:translateX(26px) rotate(40deg)}}
+section.info h2{color:#f4f7f5;font-size:clamp(46px,6.4vw,68px)}
+/* leaf-sweep transition between landing page and chat */
+#wipe{position:fixed;left:0;top:0;height:100%;width:calc(100vw + 320px);z-index:60;pointer-events:none;transform:translateX(-100%);visibility:hidden}
+#wipe.go{visibility:visible;animation:wipeA 1.15s cubic-bezier(.65,0,.35,1) both}
+#wipe.go.rev{animation-name:wipeR}
+@keyframes wipeA{0%{transform:translateX(-100%)}45%,55%{transform:translateX(-160px)}100%{transform:translateX(100%)}}
+@keyframes wipeR{0%{transform:translateX(100%)}45%,55%{transform:translateX(-160px)}100%{transform:translateX(-100%)}}
+#wipe .wb{position:absolute;left:150px;right:150px;top:0;bottom:0;background:#111c15}
+#wipe svg{position:absolute;top:0;width:170px;height:100%}
+#wipe .wr{right:0}#wipe .wlf{left:0;transform:scaleX(-1)}
+.wl{position:absolute;left:50%;top:50%;font-size:42px;white-space:nowrap;opacity:0;transform:translate(-50%,-50%)}
+#wipe.go .wl{animation:wipeL 1.15s both}
+@keyframes wipeL{0%,30%{opacity:0;transform:translate(-50%,-44%) scale(.92)}45%,55%{opacity:1;transform:translate(-50%,-50%) scale(1)}72%,100%{opacity:0}}
+.wl .a{font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:600;color:var(--green)}.wl .b{font-weight:600;color:var(--text)}
+/* intro: a seed grows into a plant, the logo appears, then the screen opens like doors */
+body.intro{overflow:hidden}
+body.intro *{animation-play-state:paused!important}
+#intro,#intro *{animation-play-state:running!important}
+#intro{position:fixed;inset:0;z-index:100;cursor:pointer}
+#intro.skip{opacity:0;transition:opacity .3s;pointer-events:none}
+#intro .ih{position:absolute;left:0;right:0;height:50.2%;background:#0b0f0d;animation:.85s cubic-bezier(.7,0,.2,1) 2.3s both}
+#intro .ih.t{top:0;animation-name:hUp}#intro .ih.b{bottom:0;animation-name:hDn}
+@keyframes hUp{to{transform:translateY(-101%)}}@keyframes hDn{to{transform:translateY(101%)}}
+#intro .ln{position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:#4f9a63;transform:scaleX(0);animation:lnA .3s 2.05s forwards,lnO .25s 2.45s forwards}
+@keyframes lnA{to{transform:scaleX(1)}}@keyframes lnO{to{opacity:0}}
+#intro .ic2{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;animation:icOut .3s 2s both}
+@keyframes icOut{to{opacity:0;transform:scale(.96)}}
+#intro .ip{overflow:visible;margin-bottom:6px}
+#intro .ip path,#intro .ip circle{fill:none}
+#intro .gd{stroke:#2c3a31;stroke-width:2;stroke-linecap:round;stroke-dasharray:160;stroke-dashoffset:160;animation:drw .5s .1s forwards}
+#intro .sd2{fill:#a98a5b;animation:seedF .75s .15s cubic-bezier(.5,0,.7,1) both}
+@keyframes seedF{0%{transform:translateY(-190px);opacity:0}12%{opacity:1}65%{transform:translateY(0)}80%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+#intro .sm{stroke:#4f9a63;stroke-width:3;stroke-linecap:round;stroke-dasharray:120;stroke-dashoffset:120;animation:drw .7s .9s forwards}
+@keyframes drw{to{stroke-dashoffset:0}}
+#intro .lv{fill:#4f9a63!important;transform:scale(0);transform-box:fill-box;animation:pp .45s var(--d) cubic-bezier(.3,1.6,.5,1) forwards}
+#intro .lv.r{transform-origin:0 100%}#intro .lv.l{transform-origin:100% 100%}
+#intro .bd{fill:#6fb08a!important;transform:scale(0);transform-box:fill-box;transform-origin:50% 50%;animation:pp .45s 1.85s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes pp{to{transform:scale(1)}}
+#intro .it{font-size:46px;line-height:1.1;letter-spacing:-.5px;perspective:600px;white-space:nowrap}
+#intro .it i{display:inline-block;opacity:0;transform:translateY(24px) rotateX(-80deg);animation:lt .6s calc(1.1s + var(--i)*.07s) cubic-bezier(.3,1.4,.5,1) forwards}
+@keyframes lt{to{opacity:1;transform:none}}
+#intro .it .a i{font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:600;color:#5f9e6e}
+#intro .it .b i{font-weight:600;color:#e6ebe7}
+#intro .tg2{margin-top:10px;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#6c7a71;opacity:0;animation:fade .5s 1.8s forwards}
+@media(prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
 </head>
-<body>
+<body class="intro">
+<div id="intro" title="Click to skip">
+  <div class="ih t"></div><div class="ih b"></div><div class="ln"></div>
+  <div class="ic2">
+    <svg class="ip" viewBox="0 0 200 220" width="200" height="220">
+      <path class="gd" d="M20 190H180"/>
+      <circle class="sd2" cx="100" cy="184" r="6"/>
+      <path class="sm" d="M100 184V68"/>
+      <path class="lv l" style="--d:1.2s" d="M100 150C85 150 68 140 62 122C80 122 97 134 100 150z"/><path class="lv r" style="--d:1.3s" d="M100 150C115 150 132 140 138 122C120 122 103 134 100 150z"/><path class="lv l" style="--d:1.4s" d="M100 120C87.25 120 72.8 111.5 67.7 96.2C83 96.2 97.45 106.4 100 120z"/><path class="lv r" style="--d:1.5s" d="M100 120C112.75 120 127.2 111.5 132.3 96.2C117 96.2 102.55 106.4 100 120z"/><path class="lv l" style="--d:1.6s" d="M100 92C89.5 92 77.6 85 73.4 72.4C86 72.4 97.9 80.8 100 92z"/><path class="lv r" style="--d:1.7000000000000002s" d="M100 92C110.5 92 122.4 85 126.6 72.4C114 72.4 102.1 80.8 100 92z"/>
+      <circle class="bd" cx="100" cy="64" r="5.5"/>
+    </svg>
+    <div class="it"><span class="a"><i style="--i:0">F</i><i style="--i:1">a</i><i style="--i:2">r</i><i style="--i:3">m</i><i style="--i:4">e</i><i style="--i:5">r</i></span><span class="b"><i style="--i:6">S</i><i style="--i:7">e</i><i style="--i:8">n</i><i style="--i:9">s</i><i style="--i:10">e</i></span></div>
+    <div class="tg2">Smart crop assistant</div>
+  </div>
+</div>
 <div id="pbar"></div>
 <div id="vein"><div class="vt"></div><div id="vthumb"><svg width="30" height="34" viewBox="0 0 30 34"><path d="M15 1C26 8 28 20 15 31 2 20 4 8 15 1z" fill="#5f9e6e"/><path d="M15 5V33M15 12l-5 4M15 12l5 4M15 18l-6 5M15 18l6 5" stroke="#2f5e3d" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div></div>
 <header>
@@ -424,6 +496,15 @@ document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbeg
     mk("path",{d:"M60 96h120M64 110h112M96 84l-6 38M120 84v40M144 84l6 38",stroke:"#3a5a44","stroke-width":1.2,fill:"none"},g);
     mk("path",{d:"M72 82C72 28 168 28 168 82",stroke:"#4d7f5b","stroke-width":2,fill:"none"},g)});
 
+  // Vine dividers: a vine grows outward from the centre at the top of every section
+  document.querySelectorAll("section.info").forEach(sec=>{
+    const d=document.createElement("div");d.className="dvd";
+    const g=mk("g",{},mk("svg",{viewBox:"0 0 1000 40",width:1000,height:40},d));
+    plant(g,"M500 20C550 2 610 38 670 20S790 4 850 20S950 34 1000 18",9,.7,1.4,.15);
+    plant(g,"M500 20C450 38 390 2 330 20S210 36 150 20S50 6 0 22",9,.7,1.4,.15);
+    mk("circle",{cx:500,cy:20,r:4,fill:"currentColor",class:"bud"},g);
+    sec.insertBefore(d,sec.firstChild)});
+
   const rm=matchMedia("(prefers-reduced-motion:reduce)").matches;
 
   // Cursor interaction: moving the pointer through bushes / vines brushes the leaves, which then wobble back
@@ -474,7 +555,7 @@ document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbeg
 
 // Registration form: sends a confirmation email through EmailJS
 // Fill in your EmailJS Template ID and Public Key below (the service ID is already set).
-const EJ={service:"service_xlxh7dk",template:"PASTE_TEMPLATE_ID_HERE",key:"PASTE_PUBLIC_KEY_HERE"};
+const EJ={service:"service_xlxh7dk",template:"template_8z74q1a",key:"vWzSiB-MVagcoQD_Q"};
 const rf=$("regForm"),rbtn=$("rbtn"),rmsg=$("rmsg");
 rf.addEventListener("submit",async e=>{
   e.preventDefault();
@@ -518,6 +599,44 @@ rf.addEventListener("submit",async e=>{
   go();
 })();
 
+// Kinetic headings: letters flip up one after another when a section arrives
+document.querySelectorAll("section.info h2").forEach(h=>{
+  h.setAttribute("aria-label",h.textContent);let n=0;
+  const walk=el=>[...el.childNodes].forEach(c=>{
+    if(c.nodeType===3){const f=document.createDocumentFragment();
+      for(const ch of c.textContent){const s=document.createElement("span");s.className="lt";s.setAttribute("aria-hidden","true");s.style.setProperty("--i",n++);s.textContent=ch===" "?"\u00a0":ch;f.appendChild(s)}
+      c.replaceWith(f)}else if(c.nodeType===1)walk(c)});
+  walk(h)});
+
+// Drifting leaves behind the page content
+(function(){
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  const box=document.createElement("div");box.id="fall";box.setAttribute("aria-hidden","true");
+  const cols=["#3f6a4c","#4d7f5b","#5f9e6e","#355c42"],n=innerWidth<700?6:11,r=Math.random;
+  for(let i=0;i<n;i++){
+    const w=14+r()*16,d=document.createElement("div");d.className="fl2";
+    d.style.cssText="left:"+(r()*96).toFixed(1)+"%;opacity:"+(.22+r()*.2).toFixed(2)+";animation-duration:"+(20+r()*18).toFixed(1)+"s;animation-delay:-"+(r()*30).toFixed(1)+"s";
+    d.innerHTML='<svg width="'+w.toFixed(0)+'" height="'+(w*.56).toFixed(0)+'" viewBox="0 0 32 18" style="animation-duration:'+(3+r()*3).toFixed(1)+'s;animation-delay:-'+(r()*4).toFixed(1)+'s"><path d="M0 9C8 0 22 0 32 9C22 18 8 18 0 9z" fill="'+cols[i%4]+'"/><path d="M2 9H30" stroke="#0e1210" stroke-opacity=".35"/></svg>';
+    box.appendChild(d)}
+  body.insertBefore(box,body.firstChild);
+})();
+
+// Leaf-sweep transition: a wall of leaves sweeps across the screen while the page switches between landing and chat
+const wipe=(function(){
+  const w=document.createElement("div");w.id="wipe";w.setAttribute("aria-hidden","true");
+  const cols=["#1b2e21","#223a29","#2b4a34","#3a6b48"],r=Math.random;let L="";
+  for(let y=-20;y<930;y+=16){const sc=2+r()*2.6,a=(r()-.5)*80;
+    L+='<path d="M0 0C8-9 22-9 32 0C22 9 8 9 0 0Z" fill="'+cols[(r()*4)|0]+'" transform="translate('+(r()*18-6).toFixed(1)+' '+y+') rotate('+a.toFixed(0)+') scale('+sc.toFixed(2)+')"/>'}
+  const strip=c=>'<svg class="'+c+'" viewBox="0 0 170 900" preserveAspectRatio="none">'+L+'</svg>';
+  w.innerHTML=strip("wlf")+'<div class="wb"></div>'+strip("wr")+'<div class="wl"><span class="a">Farmer</span><span class="b">Sense</span></div>';
+  body.appendChild(w);
+  const still=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  return (mid,rev)=>{
+    if(still){setTimeout(mid,380);return}
+    w.className="";void w.offsetWidth;w.className="go"+(rev?" rev":"");
+    setTimeout(mid,575);setTimeout(()=>{w.className=""},1250)}
+})();
+
 inp.addEventListener("input",()=>{inp.style.height="auto";inp.style.height=inp.scrollHeight+"px"});
 inp.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
 sendBtn.onclick=()=>send();
@@ -526,11 +645,11 @@ document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{inp.value=c.textCon
 $("rm").onclick=clearImg;
 function clearImg(){image=null;$("prev").style.display="none";$("prev").classList.remove("ld");$("file").value=""}
 
-$("nc").onclick=()=>{
+$("nc").onclick=()=>wipe(()=>{
   history=[];msgs.innerHTML="";clearImg();inp.value="";
   body.classList.remove("focus","leaving");chat.classList.remove("started");
   window.scrollTo(0,0);clearTimeout(tw);type();
-};
+},1);
 
 // Copy button (works for both user and bot messages)
 msgs.addEventListener("click",e=>{
@@ -627,7 +746,7 @@ async function send(){
   if(!chat.classList.contains("started")){
     // transition to chat-only view
     body.classList.add("leaving");
-    await new Promise(r=>setTimeout(r,380));
+    await new Promise(r=>wipe(r));
     window.scrollTo(0,0);
     body.classList.add("focus");chat.classList.add("started");
   }
@@ -669,6 +788,16 @@ async function send(){
   clearInterval(iv);out.classList.add("fin");sendBtn.classList.remove("ld");body.classList.remove("wait");
   busy=false;sendBtn.disabled=false;inp.focus();
 }
+</script>
+<script>
+(function(){
+  const b=document.body,el=document.getElementById("intro");
+  if(!el)return;
+  const done=()=>b.classList.remove("intro"),kill=()=>el.remove();
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches){done();kill();return}
+  const t1=setTimeout(done,2300),t2=setTimeout(kill,3300);
+  el.addEventListener("click",()=>{clearTimeout(t1);clearTimeout(t2);done();el.classList.add("skip");setTimeout(kill,350)});
+})();
 </script>
 </body>
 </html>
