@@ -178,13 +178,42 @@ body.focus #vein{top:60px}
 #vthumb:hover svg{transform:scale(1.12) rotate(-6deg)}
 #vein.drag #vthumb{cursor:grabbing}
 #vein.drag #vthumb svg{transform:scale(.94)}
+.av{position:relative;width:32px;height:32px;background:linear-gradient(145deg,#4a8f5c,#2f6a41)}
+.av svg{width:18px;height:18px;transform-origin:50% 90%}
+.m.b:not(.fin) .av svg{animation:avs 1.6s ease-in-out infinite}
+.m.b:not(.fin) .av::before{content:"";position:absolute;inset:-5px;border-radius:50%;border:2px solid transparent;border-top-color:var(--green);border-right-color:rgba(95,158,110,.35);animation:spin 1s linear infinite}
+@keyframes avs{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(8deg) scale(1.08)}}
+.box{position:relative}
+.box.dz{border:1px dashed var(--green);background:#18241c}
+.box.dz::after{content:"Drop your crop photo here";position:absolute;inset:0;display:grid;place-items:center;border-radius:26px;background:rgba(24,36,28,.94);color:var(--green);font-weight:500}
+.bub code{background:var(--surface2);padding:1px 6px;border-radius:6px;font:.9em ui-monospace,SFMono-Regular,Consolas,Menlo,monospace}
+.cb{margin:12px 0;border:1px solid var(--line);border-radius:12px;background:#0b0f0d;overflow:hidden;text-align:left}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:5px 8px 5px 14px;background:var(--surface);border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);text-transform:lowercase}
+.cc{display:flex;align-items:center;gap:6px;background:none;border:none;color:var(--muted);font:inherit;font-size:12px;padding:4px 8px;border-radius:8px;cursor:pointer;transition:background .2s,color .2s}
+.cc:hover{background:var(--surface2);color:var(--text)}.cc.ok{color:var(--green)}
+.cc:hover svg{animation:wig .5s}
+.cb pre{margin:0;padding:14px 16px;overflow-x:auto;font:13.5px/1.6 ui-monospace,"JetBrains Mono",SFMono-Regular,Consolas,Menlo,monospace;color:#d4dad6;tab-size:2;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.cb code{font:inherit;background:none;padding:0;white-space:pre}
+.tk-c{color:#6a8a73;font-style:italic}.tk-k{color:#7aa6da}.tk-s{color:#c8a97e}.tk-n{color:#b5cea8}.tk-f{color:#dcdcaa}.tk-t{color:#6fb08a}.tk-a{color:#9cdcfe}
+.dh{display:flex;align-items:center;gap:7px;margin:0 auto 0 4px;background:none;border:1px dashed #34423a;color:var(--muted);font:inherit;font-size:12.5px;padding:5px 12px;border-radius:999px;cursor:pointer;transition:color .2s,border-color .2s,background .2s}
+.dh:hover{color:var(--text);border-color:var(--green);background:var(--surface2)}
+.dh svg{flex:none;transition:transform .3s var(--ease)}
+.dh:hover svg{transform:translateY(-2px) scale(1.1)}
+@media(hover:none){.dh{display:none}}
+@media(max-width:600px){.dh span{display:none}.dh{padding:6px 8px}}
+.av{width:36px;height:36px;background:var(--surface2);border:1px solid var(--line)}
+.av img{display:block;width:100%;height:100%;object-fit:contain;padding:5px;border-radius:50%}
+.m.b:not(.fin) .av img{animation:avp 1.6s ease-in-out infinite}
+@keyframes avp{50%{transform:scale(.9)}}
+.logo .lg{align-self:center;height:32px;width:auto;margin-left:10px;display:block}
+@media(max-width:620px){.logo .lg{height:26px;margin-left:8px}}
 </style>
 </head>
 <body>
 <div id="pbar"></div>
 <div id="vein"><div class="vt"></div><div id="vthumb"><svg width="30" height="34" viewBox="0 0 30 34"><path d="M15 1C26 8 28 20 15 31 2 20 4 8 15 1z" fill="#5f9e6e"/><path d="M15 5V33M15 12l-5 4M15 12l5 4M15 18l-6 5M15 18l6 5" stroke="#2f5e3d" stroke-width="1.3" fill="none" stroke-linecap="round"/></svg></div></div>
 <header>
-  <a class="logo" href="#"><span class="a">Farmer</span><span class="b">Sense</span></a>
+  <a class="logo" href="#"><span class="a">Farmer</span><span class="b">Sense</span><img class="lg" src="logo.png" alt="" onerror="this.style.display='none'"></a>
   <nav><a href="#about">About us</a><a href="#what-we-do">What we do?</a><a href="#what-we-provide">What we provide?</a></nav>
 </header>
 <div id="bar">
@@ -202,6 +231,7 @@ body.focus #vein{top:60px}
     <div class="row">
       <button class="ib" id="att" title="Add a photo of your crop"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
       <input type="file" id="file" accept="image/*" hidden>
+      <button class="dh" id="dh" type="button" title="Attach a photo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="9" cy="9" r="1.2"/></svg><span>Drag &amp; drop or paste a crop photo</span></button>
       <button class="ib" id="send" title="Send"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
     </div>
   </div>
@@ -244,7 +274,7 @@ body.focus #vein{top:60px}
 const API_URL = "https://farmersense.meetnimbalkar.workers.dev";
 // Tried in order; if one fails (busy / provider error) the next is used automatically.
 const MODELS = ["dots-studio/dots-3-note-preview:free","google/gemma-4-26b-a4b-it:free"];
-const SYSTEM = "You are FarmerSense, a friendly expert agricultural assistant for farmers. Help with crop tracking, plant health, crop management, irrigation, soil and fertiliser, pest control, disease control, weather and other factors affecting crops, and increasing productivity. Use simple, practical language. When a photo is provided, describe what you see, give the most likely causes, and suggest clear next steps (organic options first, then chemical with safety notes). Ask for the crop, location, growth stage or symptoms if needed. Keep answers concise and well structured. Reply in the language the farmer uses. For serious problems, advise consulting a local agriculture officer. If anyone asks who created, built, developed or made you, always answer that you were created by a team: Meet Nimbalkar is the main and lead developer (integrating the database and designs, and managing the API); Vedant Patel is the frontend and database developer (found the best LLM to solve the problem); and Nisrag Patel is the design and elemental developer (transitions, animations and theme). Mention the lead developer first and keep the answer short and friendly.";
+const SYSTEM = "You are FarmerSense, a friendly expert agricultural assistant for farmers. Help with crop tracking, plant health, crop management, irrigation, soil and fertiliser, pest control, disease control, weather and other factors affecting crops, and increasing productivity. Use simple, practical language. When a photo is provided, describe what you see, give the most likely causes, and suggest clear next steps (organic options first, then chemical with safety notes). Ask for the crop, location, growth stage or symptoms if needed. Keep answers concise and well structured. Reply in the language the farmer uses. For serious problems, advise consulting a local agriculture officer. If anyone asks who created, built, developed or made you, always answer that you were created by a team: Meet Nimbalkar is the main and lead developer (integrating the database and designs, and managing the API); Vedant Patel is the frontend and database developer (found the best LLM to solve the problem); and Nisrag Patel is the design and elemental developer (transitions, animations and theme). Mention the lead developer first and keep the answer short and friendly. Whenever you write code (HTML, CSS, JavaScript, Python or anything else), always put it inside a fenced markdown code block that starts with the language name, for example ```html, and keep explanations outside the block.";
 // ----------------
 const $ = id => document.getElementById(id);
 const body=document.body, chat=$("chat"), msgs=$("msgs"), inp=$("inp"), sendBtn=$("send");
@@ -284,6 +314,7 @@ document.querySelectorAll(".info").forEach(s=>io?io.observe(s):s.classList.add("
 
 // ---- v2 extras ----
 const THINK='<div class="think"><svg width="30" height="30" viewBox="0 0 32 32"><path class="st" d="M16 29V15"/><path class="lf l1" d="M16 17C16 11 11 8 5 8c0 6 5 9 11 9z"/><path class="lf l2" d="M16 14c0-6 5-9 11-9 0 6-5 9-11 9z"/></svg><span class="tt">Analysing your question…</span></div>';
+const AV='<div class="av"><img src="logo.png" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\'"><svg style="display:none" viewBox="0 0 24 24" fill="none" stroke="#e6f2e8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21v-9"/><path d="M12 12c0-4 3-6.5 7-6.5 0 4-3 6.5-7 6.5z"/><path d="M12 15c0-3-2.5-5-6-5 0 3 2.5 5 6 5z"/></svg></div>';
 const WAIT=["Analysing your question…","Checking crop knowledge…","Looking at soil, pests and weather…","Preparing practical advice…"];
 const ICONS=["M12 21v-8M12 13c0-4 3-6 7-6 0 4-3 6-7 6zM12 15c0-3-2-5-6-5 0 3 2 5 6 5z","M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z","M3 17l6-6 4 4 8-8M15 7h6v6","M4 8h3l2-3h6l2 3h3v11H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z","M9 8a3 3 0 0 1 6 0v8a3 3 0 0 1-6 0zM4 9l5 2M20 9l-5 2M4 15l5-1M20 15l-5-1M9 5L7 3M15 5l2-2","M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4","M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2"];
 document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbegin",'<span class="ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="'+ICONS[i]+'"/></svg></span>'));
@@ -347,7 +378,7 @@ document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbeg
 inp.addEventListener("input",()=>{inp.style.height="auto";inp.style.height=inp.scrollHeight+"px"});
 inp.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
 sendBtn.onclick=()=>send();
-$("att").onclick=()=>$("file").click();
+$("att").onclick=$("dh").onclick=()=>$("file").click();
 document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{inp.value=c.textContent;send()});
 $("rm").onclick=clearImg;
 function clearImg(){image=null;$("prev").style.display="none";$("prev").classList.remove("ld");$("file").value=""}
@@ -394,20 +425,55 @@ function loadImage(f){
   r.readAsDataURL(f);
 }
 
+const esc=t=>t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const sp=(c,t)=>'<span class="tk-'+c+'">'+esc(t)+"</span>";
+function run(code,re,fn){let o="",i=0,m;re.lastIndex=0;while((m=re.exec(code))){o+=esc(code.slice(i,m.index))+fn(m);i=m.index+m[0].length;if(!m[0])re.lastIndex++}return o+esc(code.slice(i))}
+const KW=new Set("abstract and as async await break case catch class const continue def default del do elif else enum except export extends finally for from function if implements import in instanceof interface is lambda let new not or pass private protected public raise return static super switch this throw try typeof var void while with yield null None true false True False undefined self int float string bool char double long echo fi then done SELECT FROM WHERE INSERT INTO UPDATE DELETE CREATE TABLE JOIN ORDER BY GROUP VALUES AND OR NOT NULL".split(" "));
+const G1=/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("""[\s\S]*?"""|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)(\()?/g;
+const G2=/(#[^\n]*|\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("""[\s\S]*?"""|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'|`(?:\\.|[^`\\])*`)|(\b\d+(?:\.\d+)?\b)|([A-Za-z_$][\w$]*)(\()?/g;
+function hl(code,lang){
+  lang=(lang||"").toLowerCase();
+  if(/^(html|htm|xml|svg|vue|jsx|tsx)$/.test(lang)||(!lang&&/^\s*<[!A-Za-z]/.test(code)))
+    return run(code,/(<!--[\s\S]*?-->)|(<\/?[A-Za-z!][\w:-]*)((?:"[^"]*"|'[^']*'|[^>"'])*)(\/?>)/g,m=>m[1]?sp("c",m[1]):sp("t",m[2])+run(m[3],/("[^"]*"|'[^']*')|([\w:@.-]+)(?==)/g,x=>x[1]?sp("s",x[1]):sp("a",x[2]))+sp("t",m[4]));
+  if(/^(css|scss|less)$/.test(lang))
+    return run(code,/(\/\*[\s\S]*?\*\/)|("[^"\n]*"|'[^'\n]*')|(#[0-9a-fA-F]{3,8}\b|-?\b\d+(?:\.\d+)?(?:px|em|rem|%|vh|vw|s|ms|deg)?)|(@[\w-]+)|([A-Za-z-]+)(?=\s*:)/g,m=>m[1]?sp("c",m[1]):m[2]?sp("s",m[2]):m[3]?sp("n",m[3]):m[4]?sp("k",m[4]):sp("a",m[5]));
+  const re=/^(py|python|sh|bash|shell|zsh|yaml|yml|rb|ruby|r|toml|ini)$/.test(lang)?G2:G1;
+  return run(code,re,m=>m[1]?sp("c",m[1]):m[2]?sp("s",m[2]):m[3]?sp("n",m[3]):(KW.has(m[4])?sp("k",m[4]):m[5]?sp("f",m[4]):esc(m[4]))+(m[5]||""));
+}
+const box=(l,c)=>'<div class="cb"><div class="ch"><span>'+esc(l||"code")+'</span><button class="cc">'+COPY+'Copy code</button></div><pre><code>'+hl(c,l)+"</code></pre></div>";
+msgs.addEventListener("click",e=>{
+  const b=e.target.closest(".cc");if(!b)return;
+  const t=b.closest(".cb").querySelector("code").textContent;
+  const done=()=>{b.classList.add("ok");b.innerHTML=CHECK+"Copied";setTimeout(()=>{b.classList.remove("ok");b.innerHTML=COPY+"Copy code"},1600)};
+  const fb=()=>{const x=document.createElement("textarea");x.value=t;x.style.cssText="position:fixed;opacity:0";document.body.appendChild(x);x.select();try{document.execCommand("copy");done()}catch(_){}x.remove()};
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(done,fb);else fb();
+});
+
+// Drag & drop (or paste) a photo anywhere on the page
+const dbox=document.querySelector(".box");let dc=0;
+const hasFiles=e=>e.dataTransfer&&[...e.dataTransfer.types].includes("Files");
+addEventListener("dragenter",e=>{if(!hasFiles(e))return;e.preventDefault();dc++;dbox.classList.add("dz")});
+addEventListener("dragover",e=>{if(hasFiles(e))e.preventDefault()});
+addEventListener("dragleave",e=>{if(!hasFiles(e))return;dc=Math.max(0,dc-1);if(!dc)dbox.classList.remove("dz")});
+addEventListener("drop",e=>{if(!hasFiles(e))return;e.preventDefault();dc=0;dbox.classList.remove("dz");
+  const f=[...e.dataTransfer.files].find(f=>f.type.startsWith("image/"));if(f){loadImage(f);inp.focus()}});
+
 function md(s){
-  s=s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const bl=[];
+  s=s.replace(/```([\w+#.-]*)[ \t]*\n?([\s\S]*?)(?:```|$)/g,(m,l,c)=>{bl.push([l,c.replace(/\n$/,"")]);return "\n\u0000"+(bl.length-1)+"\u0000\n"});
+  s=s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/`([^`\n]+)`/g,"<code>$1</code>");
   s=s.replace(/^#{1,2} (.*)\n?/gm,"<h3>$1</h3>").replace(/^### (.*)\n?/gm,"<h4>$1</h4>")
    .replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")
    .replace(/^\s*(?:[-*•]|\d+\.) (.*)$/gm,"<li>$1</li>")
    .replace(/(?:<li>.*<\/li>\n?)+/g,m=>"<ul>"+m.replace(/\n/g,"")+"</ul>")
    .replace(/\n{2,}/g,"<br><br>").replace(/\n/g,"<br>");
-  return s;
+  return s.replace(/(?:<br>)*\u0000(\d+)\u0000(?:<br>)*/g,(m,i)=>box(bl[+i][0],bl[+i][1]));
 }
 
 function add(role,html,raw){
   const d=document.createElement("div");d.className="m "+(role==="user"?"u":"b");
   d._raw=raw||"";
-  d.innerHTML=(role==="user"?"":'<div class="av">F</div>')+'<div class="col"><div class="bub">'+html+'</div><button class="cp" title="Copy message">'+COPY+'Copy</button></div>';
+  d.innerHTML=(role==="user"?"":AV)+'<div class="col"><div class="bub">'+html+'</div><button class="cp" title="Copy message">'+COPY+'Copy</button></div>';
   msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d;
 }
 
@@ -453,9 +519,11 @@ async function send(){
     history.push({role:"assistant",content:reply});
   }catch(err){
     history.pop();
-    bub.innerHTML='<span style="color:#d98b7a">Something went wrong: '+String(err.message).replace(/</g,"&lt;")+'. The free model may be busy, please try again shortly.</span>';
+    console.error(err);
+    const busyMsg=/rate limit|free-models|quota|429|busy|overloaded/i.test(String(err.message));
+    bub.innerHTML='<span style="color:#d9a58f">'+(busyMsg?"FarmerSense is getting a lot of questions right now. Please try again in a little while.":"Sorry, I couldn't get an answer right now. Please check your internet connection and try again.")+"</span>";
   }
-  clearInterval(iv);sendBtn.classList.remove("ld");body.classList.remove("wait");
+  clearInterval(iv);out.classList.add("fin");sendBtn.classList.remove("ld");body.classList.remove("wait");
   busy=false;sendBtn.disabled=false;msgs.scrollTop=msgs.scrollHeight;inp.focus();
 }
 </script>
