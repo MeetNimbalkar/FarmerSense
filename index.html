@@ -103,7 +103,7 @@ section.info h2{font-family:"Bebas Neue",Impact,"Arial Narrow",sans-serif;font-w
 #what-we-do h2{transform:translateX(80px)}
 #what-we-do.in h2{transform:none}
 .info>p{transform:translateY(22px);transition-delay:.15s}
-.info .card{transform:translateY(44px)}
+.info .card{transform:perspective(900px) rotateY(-70deg) translateY(30px);transform-origin:0 50%}
 .info.in h2,.info.in>p,.info.in .card{opacity:1;transform:none}
 .info.in .card:nth-child(1){transition-delay:.3s}.info.in .card:nth-child(2){transition-delay:.45s}.info.in .card:nth-child(3){transition-delay:.6s}.info.in .card:nth-child(4){transition-delay:.75s}
 .info.settled .card{transition:transform .3s var(--ease),border-color .3s;transition-delay:0s}
@@ -234,9 +234,10 @@ section.info{position:relative}
 .rb:hover{background:var(--green);transform:translateY(-1px)}.rb:disabled{opacity:.65;cursor:default;transform:none}
 .rb.ld::before{content:"";width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 .rm{grid-column:1/-1;font-size:14px;min-height:20px;margin:0}.rm.ok{color:var(--green)}.rm.err{color:#d9a58f}
-.info .reg{opacity:0;transform:translateY(40px);transition:opacity .9s var(--ease) .15s,transform .9s var(--ease) .15s}
+.info .reg{opacity:0;transform:perspective(900px) rotateX(-22deg) translateY(40px);transform-origin:50% 0;transition:opacity .9s var(--ease) .15s,transform .9s var(--ease) .15s}
 .info.in .reg{opacity:1;transform:none}
 @media(max-width:620px){.reg{grid-template-columns:1fr}}
+#chat,section.info{transform-origin:50% 50%;will-change:transform}
 </style>
 </head>
 <body>
@@ -473,7 +474,7 @@ document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbeg
 
 // Registration form: sends a confirmation email through EmailJS
 // Fill in your EmailJS Template ID and Public Key below (the service ID is already set).
-const EJ={service:"service_xlxh7dk",template:"template_8z74q1a",key:"vWzSiB-MVagcoQD_Q"};
+const EJ={service:"service_xlxh7dk",template:"PASTE_TEMPLATE_ID_HERE",key:"PASTE_PUBLIC_KEY_HERE"};
 const rf=$("regForm"),rbtn=$("rbtn"),rmsg=$("rmsg");
 rf.addEventListener("submit",async e=>{
   e.preventDefault();
@@ -494,6 +495,28 @@ rf.addEventListener("submit",async e=>{
   }catch(err){console.error(err);say("Sorry, we couldn't send the confirmation right now. Please try again later.","err")}
   rbtn.disabled=false;rbtn.classList.remove("ld");
 });
+
+// 3D scroll transitions: each section tilts and rotates in perspective as it enters and leaves the screen
+(function(){
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+  const secs=[...document.querySelectorAll("#chat,section.info")];let tk=false;
+  function go(){
+    tk=false;const vh=innerHeight,f=body.classList.contains("focus");
+    secs.forEach((s,i)=>{
+      if(f){s.style.transform="";s.style.opacity="";return}
+      const h=s.offsetHeight,t=Math.max(-1,Math.min(1,(s.offsetTop+h/2-scrollY-vh/2)/(vh/2+h/2)));
+      const u=Math.sign(t)*Math.max(0,Math.abs(t)-.15)/.85;           // flat while near the middle of the screen
+      if(!u){s.style.transform="";s.style.opacity="";return}
+      const k=i?1:.5,ry=i?(i%2?12:-12)*u:0;
+      s.style.transform="perspective(1200px) rotateX("+(u*30*k).toFixed(2)+"deg) rotateY("+ry.toFixed(2)+"deg) translateZ("+(-Math.abs(u)*140*k).toFixed(1)+"px)";
+      s.style.opacity=(1-Math.abs(u)*.45).toFixed(2);
+    });
+  }
+  const q=()=>{if(!tk){tk=true;requestAnimationFrame(go)}};
+  addEventListener("scroll",q,{passive:true});addEventListener("resize",q);
+  new MutationObserver(q).observe(body,{attributes:true,attributeFilter:["class"]});
+  go();
+})();
 
 inp.addEventListener("input",()=>{inp.style.height="auto";inp.style.height=inp.scrollHeight+"px"});
 inp.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
