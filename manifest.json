@@ -1,0 +1,14 @@
+{
+  "name": "FarmerSense – Smart Crop Assistant",
+  "short_name": "FarmerSense",
+  "description": "An AI assistant that helps farmers with crops, pests, diseases and productivity.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0e1210",
+  "theme_color": "#0e1210",
+  "icons": [
+    { "src": "logonew.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "logonew.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
