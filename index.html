@@ -268,7 +268,7 @@ section.info h2{color:#f4f7f5;font-size:clamp(46px,6.4vw,68px)}
 /* intro: a seed grows into a plant, the logo appears, then the screen opens like doors */
 body.intro{overflow:hidden}
 body.intro *{animation-play-state:paused!important}
-#intro,#intro *{animation-play-state:running!important}
+#intro,#intro *,#cube{animation-play-state:running!important}
 #intro{position:fixed;inset:0;z-index:100;cursor:pointer}
 #intro.skip{opacity:0;transition:opacity .3s;pointer-events:none}
 #intro .ih{position:absolute;left:0;right:0;height:50.2%;background:#0b0f0d;animation:.85s cubic-bezier(.7,0,.2,1) 1.95s both}
@@ -296,11 +296,30 @@ body.intro *{animation-play-state:paused!important}
 #intro .it .b i{font-weight:600;color:#e6ebe7}
 #intro .tg2{margin-top:10px;font-size:12px;letter-spacing:4px;text-transform:uppercase;color:#6c7a71;opacity:0;animation:fade .5s 1.8s forwards}
 @media(prefers-reduced-motion:reduce){#intro{display:none}}
+/* 3D swing-in of the landing page right after the intro doors open */
+body.enter{overflow-x:hidden}
+body.enter #chat{transform-origin:50% 50%;animation:pageIn 1.3s cubic-bezier(.2,.8,.2,1) backwards}
+body.enter header{transform-origin:50% 0;animation:pageInH 1.1s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes pageIn{from{opacity:0;transform:perspective(1400px) rotateY(-80deg) rotateX(8deg) translateZ(-420px) scale(.85)}55%{opacity:1}to{opacity:1;transform:perspective(1400px) rotateY(0) rotateX(0) translateZ(0) scale(1)}}
+@keyframes pageInH{from{opacity:0;transform:perspective(900px) rotateX(-85deg)}to{opacity:1;transform:perspective(900px) rotateX(0)}}
+/* real 3D cube turn: intro face -> landing page face */
+#intro .ic2{animation:none}
+#stage{position:fixed;inset:0;z-index:100;perspective:2400px;background:#050807;overflow:hidden}
+#cube{position:absolute;inset:0;transform-style:preserve-3d;transform:translateZ(-50vw);animation:cubeTurn 1.6s cubic-bezier(.65,0,.3,1) 1.7s forwards}
+@keyframes cubeTurn{0%{transform:translateZ(-50vw) rotateY(0deg)}50%{transform:translateZ(calc(-50vw - 700px)) rotateY(-45deg)}100%{transform:translateZ(-50vw) rotateY(-90deg)}}
+.face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden}
+#cube #intro{position:absolute;inset:0;z-index:auto;background:#0b0f0d;transform:translateZ(50vw);cursor:pointer}
+#world{background:#0e1210;transform:rotateY(90deg) translateZ(50vw)}
+#intro::after,#world::after{content:"";position:absolute;inset:0;background:#050807;pointer-events:none;z-index:300;opacity:0}
+#intro::after{animation:shA 1.6s 1.7s forwards}
+#world::after{opacity:.6;animation:shB 1.6s 1.7s forwards}
+@keyframes shA{to{opacity:.6}}@keyframes shB{to{opacity:0}}
+body.settled header,body.settled .hero,body.settled .box,body.settled .chips,body.settled .note{animation:none!important}
 </style>
 </head>
 <body class="intro">
 <div id="intro" title="Click to skip">
-  <div class="ih t"></div><div class="ih b"></div><div class="ln"></div>
+  
   <div class="ic2">
     <div class="it"><span class="a"><i style="--i:0">F</i><i style="--i:1">a</i><i style="--i:2">r</i><i style="--i:3">m</i><i style="--i:4">e</i><i style="--i:5">r</i></span><span class="b"><i style="--i:6">S</i><i style="--i:7">e</i><i style="--i:8">n</i><i style="--i:9">s</i><i style="--i:10">e</i></span></div>
   </div>
@@ -547,7 +566,7 @@ document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbeg
 
 // Registration form: sends a confirmation email through EmailJS
 // Fill in your EmailJS Template ID and Public Key below (the service ID is already set).
-const EJ={service:"service_xlxh7dk",template:"PASTE_TEMPLATE_ID_HERE",key:"PASTE_PUBLIC_KEY_HERE"};
+const EJ={service:"service_xlxh7dk",template:"template_8z74q1a",key:"vWzSiB-MVagcoQD_Q"};
 const rf=$("regForm"),rbtn=$("rbtn"),rmsg=$("rmsg");
 rf.addEventListener("submit",async e=>{
   e.preventDefault();
@@ -783,12 +802,24 @@ async function send(){
 </script>
 <script>
 (function(){
-  const b=document.body,el=document.getElementById("intro");
-  if(!el)return;
-  const done=()=>b.classList.remove("intro"),kill=()=>el.remove();
-  if(matchMedia("(prefers-reduced-motion:reduce)").matches){done();kill();return}
-  const t1=setTimeout(done,1950),t2=setTimeout(kill,2950);
-  el.addEventListener("click",()=>{clearTimeout(t1);clearTimeout(t2);done();el.classList.add("skip");setTimeout(kill,350)});
+  const b=document.body,$=id=>document.getElementById(id),intro=$("intro");
+  if(!intro)return;
+  const unpause=()=>b.classList.remove("intro");
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches){unpause();intro.remove();return}
+  try{
+    const stage=document.createElement("div"),cube=document.createElement("div"),world=document.createElement("div");
+    stage.id="stage";cube.id="cube";world.id="world";world.className="face";intro.classList.add("face");
+    // the whole landing page becomes the second face of the cube
+    [...b.children].filter(n=>n.tagName==="HEADER"||n.id==="chat"||n.tagName==="FOOTER"||n.matches("section.info")).forEach(n=>world.appendChild(n));
+    cube.append(intro,world);stage.appendChild(cube);
+    const fall=$("fall");fall?fall.after(stage):b.prepend(stage);
+    let t1,t2,ended=false;
+    const finish=()=>{if(ended)return;ended=true;clearTimeout(t1);clearTimeout(t2);
+      unpause();b.classList.add("settled");
+      [...world.children].forEach(n=>b.insertBefore(n,stage));stage.remove();window.scrollTo(0,0)};
+    t1=setTimeout(unpause,2200);t2=setTimeout(finish,3350);
+    stage.addEventListener("click",finish);
+  }catch(e){console.error(e);unpause();intro.remove()}
 })();
 </script>
 </body>
