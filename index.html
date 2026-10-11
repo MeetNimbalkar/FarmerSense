@@ -271,12 +271,12 @@ body.intro *{animation-play-state:paused!important}
 #intro,#intro *{animation-play-state:running!important}
 #intro{position:fixed;inset:0;z-index:100;cursor:pointer}
 #intro.skip{opacity:0;transition:opacity .3s;pointer-events:none}
-#intro .ih{position:absolute;left:0;right:0;height:50.2%;background:#0b0f0d;animation:.85s cubic-bezier(.7,0,.2,1) 2.3s both}
+#intro .ih{position:absolute;left:0;right:0;height:50.2%;background:#0b0f0d;animation:.85s cubic-bezier(.7,0,.2,1) 1.95s both}
 #intro .ih.t{top:0;animation-name:hUp}#intro .ih.b{bottom:0;animation-name:hDn}
 @keyframes hUp{to{transform:translateY(-101%)}}@keyframes hDn{to{transform:translateY(101%)}}
-#intro .ln{position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:#4f9a63;transform:scaleX(0);animation:lnA .3s 2.05s forwards,lnO .25s 2.45s forwards}
+#intro .ln{position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:#4f9a63;transform:scaleX(0);animation:lnA .3s 1.7s forwards,lnO .25s 2.1s forwards}
 @keyframes lnA{to{transform:scaleX(1)}}@keyframes lnO{to{opacity:0}}
-#intro .ic2{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;animation:icOut .3s 2s both}
+#intro .ic2{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;animation:icOut .3s 1.65s both}
 @keyframes icOut{to{opacity:0;transform:scale(.96)}}
 #intro .ip{overflow:visible;margin-bottom:6px}
 #intro .ip path,#intro .ip circle{fill:none}
@@ -289,8 +289,8 @@ body.intro *{animation-play-state:paused!important}
 #intro .lv.r{transform-origin:0 100%}#intro .lv.l{transform-origin:100% 100%}
 #intro .bd{fill:#6fb08a!important;transform:scale(0);transform-box:fill-box;transform-origin:50% 50%;animation:pp .45s 1.85s cubic-bezier(.3,1.6,.5,1) forwards}
 @keyframes pp{to{transform:scale(1)}}
-#intro .it{font-size:46px;line-height:1.1;letter-spacing:-.5px;perspective:600px;white-space:nowrap}
-#intro .it i{display:inline-block;opacity:0;transform:translateY(24px) rotateX(-80deg);animation:lt .6s calc(1.1s + var(--i)*.07s) cubic-bezier(.3,1.4,.5,1) forwards}
+#intro .it{font-size:clamp(46px,9vw,84px);line-height:1.1;letter-spacing:-.5px;perspective:600px;white-space:nowrap}
+#intro .it i{display:inline-block;opacity:0;transform:translateY(24px) rotateX(-80deg);animation:lt .6s calc(.25s + var(--i)*.07s) cubic-bezier(.3,1.4,.5,1) forwards}
 @keyframes lt{to{opacity:1;transform:none}}
 #intro .it .a i{font-family:Fraunces,Georgia,serif;font-style:italic;font-weight:600;color:#5f9e6e}
 #intro .it .b i{font-weight:600;color:#e6ebe7}
@@ -302,15 +302,7 @@ body.intro *{animation-play-state:paused!important}
 <div id="intro" title="Click to skip">
   <div class="ih t"></div><div class="ih b"></div><div class="ln"></div>
   <div class="ic2">
-    <svg class="ip" viewBox="0 0 200 220" width="200" height="220">
-      <path class="gd" d="M20 190H180"/>
-      <circle class="sd2" cx="100" cy="184" r="6"/>
-      <path class="sm" d="M100 184V68"/>
-      <path class="lv l" style="--d:1.2s" d="M100 150C85 150 68 140 62 122C80 122 97 134 100 150z"/><path class="lv r" style="--d:1.3s" d="M100 150C115 150 132 140 138 122C120 122 103 134 100 150z"/><path class="lv l" style="--d:1.4s" d="M100 120C87.25 120 72.8 111.5 67.7 96.2C83 96.2 97.45 106.4 100 120z"/><path class="lv r" style="--d:1.5s" d="M100 120C112.75 120 127.2 111.5 132.3 96.2C117 96.2 102.55 106.4 100 120z"/><path class="lv l" style="--d:1.6s" d="M100 92C89.5 92 77.6 85 73.4 72.4C86 72.4 97.9 80.8 100 92z"/><path class="lv r" style="--d:1.7000000000000002s" d="M100 92C110.5 92 122.4 85 126.6 72.4C114 72.4 102.1 80.8 100 92z"/>
-      <circle class="bd" cx="100" cy="64" r="5.5"/>
-    </svg>
     <div class="it"><span class="a"><i style="--i:0">F</i><i style="--i:1">a</i><i style="--i:2">r</i><i style="--i:3">m</i><i style="--i:4">e</i><i style="--i:5">r</i></span><span class="b"><i style="--i:6">S</i><i style="--i:7">e</i><i style="--i:8">n</i><i style="--i:9">s</i><i style="--i:10">e</i></span></div>
-    <div class="tg2">Smart crop assistant</div>
   </div>
 </div>
 <div id="pbar"></div>
@@ -555,7 +547,7 @@ document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbeg
 
 // Registration form: sends a confirmation email through EmailJS
 // Fill in your EmailJS Template ID and Public Key below (the service ID is already set).
-const EJ={service:"service_xlxh7dk",template:"template_8z74q1a",key:"vWzSiB-MVagcoQD_Q"};
+const EJ={service:"service_xlxh7dk",template:"PASTE_TEMPLATE_ID_HERE",key:"PASTE_PUBLIC_KEY_HERE"};
 const rf=$("regForm"),rbtn=$("rbtn"),rmsg=$("rmsg");
 rf.addEventListener("submit",async e=>{
   e.preventDefault();
@@ -795,7 +787,7 @@ async function send(){
   if(!el)return;
   const done=()=>b.classList.remove("intro"),kill=()=>el.remove();
   if(matchMedia("(prefers-reduced-motion:reduce)").matches){done();kill();return}
-  const t1=setTimeout(done,2300),t2=setTimeout(kill,3300);
+  const t1=setTimeout(done,1950),t2=setTimeout(kill,2950);
   el.addEventListener("click",()=>{clearTimeout(t1);clearTimeout(t2);done();el.classList.add("skip");setTimeout(kill,350)});
 })();
 </script>
