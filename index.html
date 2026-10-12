@@ -315,6 +315,23 @@ body.enter header{transform-origin:50% 0;animation:pageInH 1.1s cubic-bezier(.2,
 #world::after{opacity:.6;animation:shB 1.6s 1.7s forwards}
 @keyframes shA{to{opacity:.6}}@keyframes shB{to{opacity:0}}
 body.settled header,body.settled .hero,body.settled .box,body.settled .chips,body.settled .note{animation:none!important}
+.tw{overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:12px}
+.tw table{border-collapse:collapse;width:100%;font-size:14px}
+.tw th,.tw td{padding:9px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+.tw th{background:var(--surface);color:var(--green);font-weight:600}
+.tw tbody tr:last-child td{border-bottom:0}.tw tbody tr:nth-child(even){background:rgba(255,255,255,.02)}
+.cht{margin:14px 0;padding:14px 16px 10px;border:1px solid var(--line);border-radius:12px;background:#0b0f0d}
+.ct{font-size:14px;font-weight:600;margin-bottom:8px;color:var(--text)}.cu{font-weight:400;color:var(--muted)}
+.csv{width:100%;height:auto;display:block}
+.csv .gl{stroke:#1f2822;stroke-width:1}.csv .ax{fill:#8b998f;font-size:11px;font-family:Inter,system-ui,sans-serif}.csv .vl{fill:#d4dad6;font-size:11px;font-family:Inter,system-ui,sans-serif}
+.cbar{transform-box:fill-box;transform-origin:50% 100%;animation:cgrow .8s var(--ease) both}
+@keyframes cgrow{from{transform:scaleY(0)}}
+.cln{stroke-dasharray:1500;stroke-dashoffset:1500;animation:cdraw 1.4s ease-out forwards}
+@keyframes cdraw{to{stroke-dashoffset:0}}
+.cpie{transform-origin:140px 130px;animation:cpop .7s var(--ease) both}
+@keyframes cpop{from{transform:scale(.6);opacity:0}}
+.cgl{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--muted);margin-top:6px}
+.cgl i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
 </style>
 </head>
 <body class="intro">
@@ -401,7 +418,7 @@ body.settled header,body.settled .hero,body.settled .box,body.settled .chips,bod
 const API_URL = "https://farmersense.meetnimbalkar.workers.dev";
 // Tried in order; if one fails (busy / provider error) the next is used automatically.
 const MODELS = ["dots-studio/dots-3-note-preview:free","google/gemma-4-26b-a4b-it:free"];
-const SYSTEM = "You are FarmerSense, a friendly expert agricultural assistant for farmers. Help with crop tracking, plant health, crop management, irrigation, soil and fertiliser, pest control, disease control, weather and other factors affecting crops, and increasing productivity. Use simple, practical language. When a photo is provided, describe what you see, give the most likely causes, and suggest clear next steps (organic options first, then chemical with safety notes). Ask for the crop, location, growth stage or symptoms if needed. Keep answers concise and well structured. Reply in the language the farmer uses. For serious problems, advise consulting a local agriculture officer. If anyone asks who created, built, developed or made you, always answer that you were created by a team: Meet Nimbalkar is the main and lead developer (integrating the database and designs, and managing the API); Vedant Patel is the frontend and database developer (found the best LLM to solve the problem); and Nisrag Patel is the design and elemental developer (transitions, animations and theme). Mention the lead developer first and keep the answer short and friendly. Whenever you write code (HTML, CSS, JavaScript, Python or anything else), always put it inside a fenced markdown code block that starts with the language name, for example ```html, and keep explanations outside the block.";
+const SYSTEM = "You are FarmerSense, a friendly expert agricultural assistant for farmers. Help with crop tracking, plant health, crop management, irrigation, soil and fertiliser, pest control, disease control, weather and other factors affecting crops, and increasing productivity. Use simple, practical language. When a photo is provided, describe what you see, give the most likely causes, and suggest clear next steps (organic options first, then chemical with safety notes). Ask for the crop, location, growth stage or symptoms if needed. Keep answers concise and well structured. Reply in the language the farmer uses. For serious problems, advise consulting a local agriculture officer. If anyone asks who created, built, developed or made you, always answer that you were created by a team: Meet Nimbalkar is the main and lead developer (integrating the database and designs, and managing the API); Vedant Patel is the frontend and database developer (found the best LLM to solve the problem); and Nisrag Patel is the design and elemental developer (transitions, animations and theme). Mention the lead developer first and keep the answer short and friendly. Whenever you write code (HTML, CSS, JavaScript, Python or anything else), always put it inside a fenced markdown code block that starts with the language name, for example ```html, and keep explanations outside the block. Facts about Meet Nimbalkar (share only if someone asks about him, and do not invent anything beyond this): he is currently in class 11, he is preparing for IIT-JEE, and he has a strong interest in technology. Present information visually whenever it helps: use a Markdown table to compare things, and when you have 3 or more numbers (yields, costs, schedules, rainfall, nutrient levels, trends over time or shares of a total) also draw a chart. To draw a chart, write a fenced code block whose language is chart and which contains ONLY valid JSON, for example {\"type\":\"bar\",\"title\":\"Average wheat yield\",\"unit\":\" q/acre\",\"labels\":[\"2022\",\"2023\"],\"values\":[18,21]}. Allowed types are bar, line and pie; for several series use \"datasets\":[{\"name\":\"Wheat\",\"values\":[1,2]}] instead of \"values\". Only chart numbers you actually know, or clearly label them as approximate or typical values, and never present invented numbers as exact data. Put a short explanation in normal text outside the block.";
 // ----------------
 const $ = id => document.getElementById(id);
 const body=document.body, chat=$("chat"), msgs=$("msgs"), inp=$("inp"), sendBtn=$("send");
@@ -566,7 +583,7 @@ document.querySelectorAll(".card").forEach((c,i)=>c.insertAdjacentHTML("afterbeg
 
 // Registration form: sends a confirmation email through EmailJS
 // Fill in your EmailJS Template ID and Public Key below (the service ID is already set).
-const EJ={service:"service_xlxh7dk",template:"template_8z74q1a",key:"vWzSiB-MVagcoQD_Q"};
+const EJ={service:"service_xlxh7dk",template:"PASTE_TEMPLATE_ID_HERE",key:"PASTE_PUBLIC_KEY_HERE"};
 const rf=$("regForm"),rbtn=$("rbtn"),rmsg=$("rmsg");
 rf.addEventListener("submit",async e=>{
   e.preventDefault();
@@ -713,7 +730,44 @@ function hl(code,lang){
   const re=/^(py|python|sh|bash|shell|zsh|yaml|yml|rb|ruby|r|toml|ini)$/.test(lang)?G2:G1;
   return run(code,re,m=>m[1]?sp("c",m[1]):m[2]?sp("s",m[2]):m[3]?sp("n",m[3]):(KW.has(m[4])?sp("k",m[4]):m[5]?sp("f",m[4]):esc(m[4]))+(m[5]||""));
 }
-const box=(l,c)=>'<div class="cb"><div class="ch"><span>'+esc(l||"code")+'</span><button class="cc">'+COPY+'Copy code</button></div><pre><code>'+hl(c,l)+"</code></pre></div>";
+const nice=m=>{const p=Math.pow(10,Math.floor(Math.log10(m||1))),f=m/p;return(f<=1?1:f<=2?2:f<=5?5:10)*p};
+function table(src){
+  const rows=src.split("\n").filter(r=>r.trim()).map(r=>r.trim().replace(/^\||\|$/g,"").split("|").map(c=>esc(c.trim()).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")));
+  const h=rows.shift();return '<div class="tw"><table><thead><tr>'+h.map(c=>"<th>"+c+"</th>").join("")+"</tr></thead><tbody>"+rows.map(r=>"<tr>"+r.map(c=>"<td>"+c+"</td>").join("")+"</tr>").join("")+"</tbody></table></div>"}
+function chart(src){
+  let d;try{d=JSON.parse(src.trim())}catch(e){return null}
+  if(!d||typeof d!=="object")return null;
+  const t=String(d.type||"bar").toLowerCase(),L=(d.labels||[]).map(String);
+  let S=d.datasets||(d.values?[{name:d.name||"",values:d.values}]:null);
+  if(!L.length||!Array.isArray(S)||!S.length||!["bar","line","pie"].includes(t))return null;
+  S=S.map(s=>({name:String(s.name||""),values:L.map((_,i)=>+(s.values||[])[i]||0)}));
+  const C=["#5f9e6e","#c8a97e","#7aa6da","#a65c45","#9cdcfe","#b5cea8","#c586c0","#dcdcaa"],u=d.unit?String(d.unit):"";
+  const W=560,H=260,m={l:48,r:14,t:18,b:44},pw=W-m.l-m.r,ph=H-m.t-m.b;let g="";
+  const fmt=v=>(Math.abs(v)>=10000?(v/1000).toFixed(1)+"k":+v.toFixed(2));
+  if(t==="pie"){
+    const v=S[0].values,tot=v.reduce((a,b)=>a+Math.max(0,b),0)||1,cx=140,cy=130,r=104;let a0=-Math.PI/2;
+    v.forEach((x,i)=>{const a=2*Math.PI*Math.max(0,x)/tot,a1=a0+a,tip="<title>"+esc(L[i])+": "+x+esc(u)+" ("+(100*x/tot).toFixed(1)+"%)</title>";
+      g+=a>=2*Math.PI-1e-6?'<circle class="cpie" cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="'+C[i%8]+'">'+tip+"</circle>"
+        :'<path class="cpie" d="M'+cx+" "+cy+"L"+(cx+r*Math.cos(a0))+" "+(cy+r*Math.sin(a0))+"A"+r+" "+r+" 0 "+(a>Math.PI?1:0)+" 1 "+(cx+r*Math.cos(a1))+" "+(cy+r*Math.sin(a1))+'Z" fill="'+C[i%8]+'" stroke="#0b0f0d" stroke-width="2">'+tip+"</path>";a0=a1});
+    L.slice(0,10).forEach((l,i)=>{const y=34+i*22;g+='<rect x="290" y="'+(y-10)+'" width="12" height="12" rx="3" fill="'+C[i%8]+'"/><text x="310" y="'+y+'" class="ax" style="font-size:12px">'+esc(l.length>22?l.slice(0,21)+"…":l)+" — "+(100*v[i]/tot).toFixed(0)+"%</text>"});
+  }else{
+    const st=nice(Math.max(...S.flatMap(s=>s.values),1)/4),mx=st*4,n=L.length,bw=pw/n;
+    for(let i=0;i<=4;i++){const y=m.t+ph-ph*i/4;g+='<line x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y+'" y2="'+y+'" class="gl"/><text x="'+(m.l-8)+'" y="'+(y+4)+'" class="ax" text-anchor="end">'+fmt(mx*i/4)+"</text>"}
+    if(t==="bar"){const k=S.length,w=Math.min(46,bw*.72/k);
+      S.forEach((s,j)=>s.values.forEach((v,i)=>{const h=ph*Math.max(0,v)/mx,x=m.l+bw*i+bw/2-w*k/2+w*j;
+        g+='<rect class="cbar" style="animation-delay:'+(i*60)+'ms" x="'+x+'" y="'+(m.t+ph-h)+'" width="'+(w-2)+'" height="'+h+'" rx="3" fill="'+C[j%8]+'"><title>'+esc(s.name+" "+L[i])+": "+v+esc(u)+"</title></rect>"
+          +(k===1&&n<=12?'<text x="'+(x+(w-2)/2)+'" y="'+(m.t+ph-h-6)+'" class="vl" text-anchor="middle">'+fmt(v)+"</text>":"")}));
+    }else S.forEach((s,j)=>{const p=s.values.map((v,i)=>[m.l+bw*i+bw/2,m.t+ph-ph*Math.max(0,v)/mx]);
+      g+='<polyline class="cln" fill="none" stroke="'+C[j%8]+'" stroke-width="2.5" stroke-linejoin="round" points="'+p.map(q=>q.join(",")).join(" ")+'"/>'
+        +p.map((q,i)=>'<circle cx="'+q[0]+'" cy="'+q[1]+'" r="3.5" fill="'+C[j%8]+'"><title>'+esc(s.name+" "+L[i])+": "+s.values[i]+esc(u)+"</title></circle>").join("")});
+    const sk=Math.ceil(n/12);L.forEach((l,i)=>{if(i%sk)return;g+='<text x="'+(m.l+bw*i+bw/2)+'" y="'+(H-m.b+18)+'" class="ax" text-anchor="middle">'+esc(l.length>12?l.slice(0,11)+"…":l)+"</text>"});
+  }
+  const lg=t!=="pie"&&S.length>1?'<div class="cgl">'+S.map((s,j)=>'<span><i style="background:'+C[j%8]+'"></i>'+esc(s.name||"Series "+(j+1))+"</span>").join("")+"</div>":"";
+  return '<div class="cht">'+(d.title?'<div class="ct">'+esc(String(d.title))+(u&&t!=="pie"?' <span class="cu">('+esc(u.trim())+")</span>":"")+"</div>":"")+'<svg viewBox="0 0 '+W+" "+H+'" class="csv">'+g+"</svg>"+lg+"</div>"}
+const box=(l,c)=>{
+  if(l==="\u0001table")return table(c);
+  if((l||"").toLowerCase()==="chart"){const h=chart(c);if(h)return h}
+  return'<div class="cb"><div class="ch"><span>'+esc(l||"code")+'</span><button class="cc">'+COPY+'Copy code</button></div><pre><code>'+hl(c,l)+"</code></pre></div>"};
 msgs.addEventListener("click",e=>{
   const b=e.target.closest(".cc");if(!b)return;
   const t=b.closest(".cb").querySelector("code").textContent;
@@ -734,6 +788,7 @@ addEventListener("drop",e=>{if(!hasFiles(e))return;e.preventDefault();dc=0;dbox.
 function md(s){
   const bl=[];
   s=s.replace(/```([\w+#.-]*)[ \t]*\n?([\s\S]*?)(?:```|$)/g,(m,l,c)=>{bl.push([l,c.replace(/\n$/,"")]);return "\n\u0000"+(bl.length-1)+"\u0000\n"});
+  s=s.replace(/^(\|.+\|)[ \t]*\n(\|[ \t:|-]+\|)[ \t]*\n((?:\|.+\|[ \t]*(?:\n|$))*)/gm,(m,h,sep,rows)=>{bl.push(["\u0001table",h+"\n"+rows]);return "\n\u0000"+(bl.length-1)+"\u0000\n"});
   s=s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/`([^`\n]+)`/g,"<code>$1</code>");
   s=s.replace(/^#{1,2} (.*)\n?/gm,"<h3>$1</h3>").replace(/^### (.*)\n?/gm,"<h4>$1</h4>")
    .replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")
