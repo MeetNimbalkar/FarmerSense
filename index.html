@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@600;700&family=Fraunces:ital,wght@1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0e1210;--surface:#161c18;--surface2:#1d2520;--line:#26302a;--text:#e6ebe7;--muted:#8b998f;--green:#5f9e6e;--green-d:#3f7a50;--ease:cubic-bezier(.22,.8,.3,1);--line2:#34423a;--h:#f4f7f5;--hdr:rgba(14,18,16,.92);--cbg:#0b0f0d;--code:#d4dad6;color-scheme:dark}
+:root{--bg:#0e1210;--surface:#161c18;--surface2:#1d2520;--line:#26302a;--text:#e6ebe7;--muted:#8b998f;--green:#5f9e6e;--green-d:#3f7a50;--ease:cubic-bezier(.34,1.5,.64,1);--spring:cubic-bezier(.34,1.56,.64,1);--line2:#34423a;--h:#f4f7f5;--hdr:rgba(14,18,16,.92);--cbg:#0b0f0d;--code:#d4dad6;color-scheme:dark}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6}
@@ -86,7 +86,6 @@ textarea::placeholder{color:var(--muted)}
 .row{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
 .ib{width:36px;height:36px;border-radius:50%;border:none;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;transition:background .2s,color .2s,transform .2s}
 .ib:hover{background:var(--surface2);color:var(--text)}
-.ib:active{transform:scale(.92)}
 #send{background:var(--green-d);color:#fff}
 #send:hover{background:var(--green)}
 #send:disabled{opacity:.4;cursor:default}
@@ -406,6 +405,29 @@ html[data-theme=light] .tgl .sun{transform:rotate(90deg) scale(.3);opacity:0}
 .fb:hover{background:var(--surface);transform:translateY(-1px)}
 #msgs>.m.b:not(:last-child) .fu{display:none}
 #toast{z-index:90}
+
+/* ---- v5: leaf cursor, bouncy interactions, cursor effects ---- */
+html.lc,html.lc *{cursor:none!important}
+html.lc input,html.lc textarea{cursor:text!important}html.lc select{cursor:default!important}
+#cur{position:fixed;left:0;top:0;z-index:300;width:30px;height:30px;margin:-2px 0 0 -2px;pointer-events:none;opacity:0;transition:opacity .2s}
+#cur.on{opacity:1}#cur.txt{opacity:0}
+#cur .cs{transition:transform .35s var(--spring);transform-origin:2px 2px}
+#cur svg{display:block;transform-origin:2px 2px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+#cur.hot .cs{transform:scale(1.3) rotate(-8deg)}
+.chip,.fb,.tb,.pk,.gb,.cp,.rb,.lnk,.dh{position:relative;transition:color .2s,background .2s,border-color .2s,transform .4s var(--spring)}
+.ib,.tgl{position:relative;transition:color .2s,background .2s,border-color .2s,transform .4s var(--spring)}
+.gb:hover,.tb:hover,.pk:hover,.lnk:hover,.cp:hover,.dh:hover,.fb:hover{transform:translateY(-2px) scale(1.05)}
+.chip:hover{transform:translateY(-3px) scale(1.04)}.ib:hover,.tgl:hover{transform:scale(1.1)}
+.chips .chip{animation:chipIn .7s var(--spring) backwards;animation-delay:calc(var(--n,0)*80ms + .3s)}
+.chip:nth-child(1){--n:1}.chip:nth-child(2){--n:2}.chip:nth-child(3){--n:3}.chip:nth-child(4){--n:4}.chip:nth-child(5){--n:5}
+@keyframes chipIn{from{opacity:0;transform:translateY(22px) scale(.7)}}
+.hero h1 span{display:inline-block;transform-origin:50% 85%;animation:sway2 4.5s ease-in-out infinite alternate}
+@keyframes sway2{from{transform:rotate(-2.2deg)}to{transform:rotate(2.2deg) translateY(-3px)}}
+.m.u .bub{transform-origin:100% 100%;animation:bubPop .55s var(--spring) both}
+@keyframes bubPop{from{transform:scale(.8);opacity:0}}
+nav a{transition:color .2s,background .2s,transform .35s var(--spring)}nav a:hover{transform:translateY(-3px)}
+.info.settled .card{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .4s var(--spring),border-color .3s}
+.info.settled .card:hover{transform:perspective(900px) translateY(-8px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));border-color:var(--line2)}
 </style>
 </head>
 <body class="intro">
@@ -497,7 +519,7 @@ html[data-theme=light] .tgl .sun{transform:rotate(90deg) scale(.3);opacity:0}
 const API_URL = "https://farmersense.meetnimbalkar.workers.dev";
 // Tried in order; if one fails (busy / provider error) the next is used automatically.
 const MODELS = ["dots-studio/dots-3-note-preview:free","google/gemma-4-26b-a4b-it:free"];
-const SYSTEM = "You are FarmerSense, a friendly expert agricultural assistant for farmers. Help with crop tracking, plant health, crop management, irrigation, soil and fertiliser, pest control, disease control, weather and other factors affecting crops, and increasing productivity. Use simple, practical language. When a photo is provided, describe what you see, give the most likely causes, and suggest clear next steps (organic options first, then chemical with safety notes). Ask for the crop, location, growth stage or symptoms if needed. Keep answers concise and well structured. Reply in the language the farmer uses. For serious problems, advise consulting a local agriculture officer. If anyone asks who created, built, developed or made you, always answer that you were created by a team: Meet Nimbalkar is the main and lead developer (integrating the database and designs, and managing the API); Vedant Patel is the frontend and database developer (found the best LLM to solve the problem); and Nisrag Patel is the design and elemental developer (transitions, animations and theme). Mention the lead developer first and keep the answer short and friendly. Do not write any programming code or data formats (such as HTML, CSS, JavaScript, Python, JSON or SQL) in your answers unless the farmer clearly asks for code. Farmers want plain, practical advice, so never show code by default. If the farmer does ask for code, put it inside a fenced markdown code block that starts with the language name, for example ```html, and keep explanations outside the block. The only exceptions are the special chart and followups blocks described below: the page turns them into charts and buttons, so use them as instructed and never mention or explain them. Facts about Meet Nimbalkar (share only if someone asks about him, and do not invent anything beyond this): he is currently in class 11, he is preparing for IIT-JEE, and he has a strong interest in technology. Present information visually whenever it helps: use a Markdown table to compare things, and when you have 3 or more numbers (yields, costs, schedules, rainfall, nutrient levels, trends over time or shares of a total) also draw a chart. To draw a chart, write a fenced code block whose language is chart and which contains ONLY valid JSON, for example {\"type\":\"bar\",\"title\":\"Average wheat yield\",\"unit\":\" q/acre\",\"labels\":[\"2022\",\"2023\"],\"values\":[18,21]}. Allowed types are bar, line and pie; for several series use \"datasets\":[{\"name\":\"Wheat\",\"values\":[1,2]}] instead of \"values\". Only chart numbers you actually know, or clearly label them as approximate or typical values, and never present invented numbers as exact data. Put a short explanation in normal text outside the block. After every answer, finish with a fenced code block whose language is followups and which contains ONLY a JSON array of 2 or 3 short follow-up questions the farmer might want to ask next, for example [\"How much water does it need?\",\"Which pesticide is safe?\"], written in the same language as the answer. Never mention or explain this block.";
+const SYSTEM = "You are FarmerSense, a friendly expert agricultural assistant for farmers. Help with crop tracking, plant health, crop management, irrigation, soil and fertiliser, pest control, disease control, weather and other factors affecting crops, and increasing productivity. Use simple, practical language. When a photo is provided, describe what you see, give the most likely causes, and suggest clear next steps (organic options first, then chemical with safety notes). Ask for the crop, location, growth stage or symptoms if needed. Keep answers concise and well structured. Reply in the language the farmer uses. For serious problems, advise consulting a local agriculture officer. If anyone asks who created, built, developed or made you, always answer that you were created by a team: Meet Nimbalkar is the main and lead developer (integrating the database and designs, and managing the API); Vedant Patel is the frontend and database developer (found the best LLM to solve the problem); and Nisarg Patel is the design and elemental developer (transitions, animations and theme). Mention the lead developer first and keep the answer short and friendly. Do not write any programming code or data formats (such as HTML, CSS, JavaScript, Python, JSON or SQL) in your answers unless the farmer clearly asks for code. Farmers want plain, practical advice, so never show code by default. If the farmer does ask for code, put it inside a fenced markdown code block that starts with the language name, for example ```html, and keep explanations outside the block. The only exceptions are the special chart and followups blocks described below: the page turns them into charts and buttons, so use them as instructed and never mention or explain them. Facts about Meet Nimbalkar (share only if someone asks about him, and do not invent anything beyond this): he is currently in class 11, he is preparing for IIT-JEE, and he has a strong interest in technology. Present information visually whenever it helps: use a Markdown table to compare things, and when you have 3 or more numbers (yields, costs, schedules, rainfall, nutrient levels, trends over time or shares of a total) also draw a chart. To draw a chart, write a fenced code block whose language label is exactly the word chart (never json) and which contains ONLY valid JSON, for example {\"type\":\"bar\",\"title\":\"Average wheat yield\",\"unit\":\" q/acre\",\"labels\":[\"2022\",\"2023\"],\"values\":[18,21]}. Allowed types are bar, line and pie; for several series use \"datasets\":[{\"name\":\"Wheat\",\"values\":[1,2]}] instead of \"values\". Only chart numbers you actually know, or clearly label them as approximate or typical values, and never present invented numbers as exact data. Put a short explanation in normal text outside the block. After every answer, finish with a fenced code block whose language label is exactly the word followups (never json) and which contains ONLY a JSON array of 2 or 3 short follow-up questions the farmer might want to ask next, for example [\"How much water does it need?\",\"Which pesticide is safe?\"], written in the same language as the answer. Never mention or explain this block.";
 // ----------------
 const $ = id => document.getElementById(id);
 const body=document.body, chat=$("chat"), msgs=$("msgs"), inp=$("inp"), sendBtn=$("send");
@@ -825,7 +847,9 @@ addEventListener("keydown",e=>{
 
 // ---- v4 features: chat history, farm profile, crop doctor, follow-up chips, share ----
 const LS={get:(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-const clean=t=>t.replace(/```followups[\s\S]*?(?:```|$)/g,"").trim();
+const isFU=c=>{try{const a=JSON.parse(c.trim());return Array.isArray(a)&&a.length>0&&a.length<=5&&a.every(x=>typeof x==="string"&&x.length<150)}catch(e){return false}};
+const fuHTML=c=>'<div class="fu">'+JSON.parse(c.trim()).slice(0,3).map(q=>'<button class="fb">'+esc(String(q))+"</button>").join("")+"</div>";
+const clean=t=>t.replace(/```followups[\s\S]*?(?:```|$)/g,"").replace(/```[\w-]*[ \t]*\n?([\s\S]*?)```\s*$/,(m,c)=>isFU(c)?"":m).trim();
 const SHR='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/></svg>';
 const ICO={dr:'<path d="M12 21c-4-3-7-6-7-10a7 7 0 0 1 14 0c0 4-3 7-7 10zM12 8v6M9 11h6"/>',fm:'<path d="M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6"/>',hs:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',wx:'<path d="M7 18a4 4 0 0 1 0-8 5.5 5.5 0 0 1 10.6 1.5A3.5 3.5 0 0 1 17 18z"/>',sv:'<path d="M12 4v10M8 10l4 4 4-4M5 19h14"/>'};
 const LBL={dr:"Crop doctor",fm:"My farm",hs:"History",wx:"Weather",sv:"Save chat"};
@@ -856,7 +880,7 @@ $("file").addEventListener("change",()=>setTimeout(()=>{const m=$("dpm");if(m)m.
 const PF=()=>LS.get("fs_profile",{});
 function profileStr(){const p=PF(),a=[];
   if(p.crops)a.push("main crops: "+p.crops);if(p.loc)a.push("location: "+p.loc);if(p.size)a.push("land: "+p.size+" "+(p.unit||"acre"));if(p.soil)a.push("soil: "+p.soil);if(p.irr)a.push("irrigation: "+p.irr);
-  return a.length?"Known details about this farmer (use them to personalise advice, but do not repeat them back unless useful): "+a.join("; ")+".":""}
+  return a.length?"Known details about this farmer (use them to personalise advice, but never mention or repeat them in greetings or small talk, and only when they truly matter to the question): "+a.join("; ")+".":""}
 function applyName(){const h=document.querySelector(".hero h1 span");if(h)h.textContent=(PF().name||"farmer").trim().split(/\s+/)[0].slice(0,14)||"farmer"}
 const opts=(a,v)=>a.map(x=>"<option"+(x===v?" selected":"")+">"+esc(x)+"</option>").join("");
 function profileModal(){const p=PF();
@@ -930,6 +954,37 @@ msgs.addEventListener("click",e=>{
 // entry points
 $("dr").onclick=doctor;$("fm").onclick=profileModal;$("hs").onclick=historyModal;
 document.querySelectorAll(".tb").forEach(b=>b.onclick=()=>({dr:doctor,fm:profileModal,hs:historyModal})[b.dataset.tool]());
+
+// ---- v5: leaf cursor (swings as it moves, grows over buttons) and card tilt ----
+(function(){
+  if(!matchMedia("(hover:hover) and (pointer:fine)").matches)return;
+  const still=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const SVG='<svg width="30" height="30" viewBox="0 0 30 30">'
+   +'<path d="M2 2C9 2 20 6 26 16C28 20 28 24 27 28C20 28 14 26 9 21C4 16 2 9 2 2z" fill="#3f9d62" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>'
+   +'<path d="M2 2C9 2 20 6 26 16C16 14 8 9 2 2z" fill="#86d6a1" opacity=".75"/>'
+   +'<path d="M3.5 3.5C12 10 20 17 26.5 27" stroke="#fff" stroke-opacity=".85" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>';
+  const cur=document.createElement("div");cur.id="cur";cur.innerHTML='<div class="cs">'+SVG+"</div>";body.appendChild(cur);
+  const sv=cur.querySelector("svg");document.documentElement.classList.add("lc");
+  const HOT="a,button,.chip,.pk,.fb,.tb,.gb,.ho,.hd,.mx,.cc,.cp,.lnk,.tgl,.ib,label,#vein,#intro";
+  let px=-99,sw=0,tsw=0,idle=0,run=false,tc=null;
+  function frame(t){
+    run=false;tsw*=.88;
+    if(!still&&t-idle>1500&&t-idle<5000)tsw=Math.sin(t/520)*7;      // gentle breeze when the cursor rests
+    sw+=(tsw-sw)*.2;sv.style.transform="rotate("+sw.toFixed(1)+"deg)";
+    if(Math.abs(sw)>.05||t-idle<5200){run=true;requestAnimationFrame(frame)}}
+  const kick=()=>{if(!run){run=true;requestAnimationFrame(frame)}};
+  function tilt(e){const c=e.target.closest&&e.target.closest(".card");
+    if(tc&&tc!==c){tc.style.removeProperty("--rx");tc.style.removeProperty("--ry")}tc=c;
+    if(c){const r=c.getBoundingClientRect();c.style.setProperty("--ry",(((e.clientX-r.left)/r.width-.5)*12).toFixed(1)+"deg");c.style.setProperty("--rx",(-((e.clientY-r.top)/r.height-.5)*12).toFixed(1)+"deg")}}
+  addEventListener("pointermove",e=>{
+    if(e.pointerType!=="mouse")return;
+    const x=e.clientX,y=e.clientY;cur.style.transform="translate3d("+x+"px,"+y+"px,0)";cur.classList.add("on");
+    if(px>-90&&!still)tsw=Math.max(-28,Math.min(28,(x-px)*.9));
+    px=x;idle=performance.now();
+    const t=e.target;cur.classList.toggle("txt",!!(t.closest&&t.closest("input,textarea,select")));cur.classList.toggle("hot",!!(t.closest&&t.closest(HOT)));
+    if(!still)tilt(e);kick()},{passive:true});
+  document.documentElement.addEventListener("mouseleave",()=>cur.classList.remove("on"));
+})();
 
 inp.addEventListener("input",()=>{inp.style.height="auto";inp.style.height=inp.scrollHeight+"px"});
 inp.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
@@ -1063,7 +1118,8 @@ function md(s){
    .replace(/^\s*(?:[-*•]|\d+\.) (.*)$/gm,"<li>$1</li>")
    .replace(/(?:<li>.*<\/li>\n?)+/g,m=>"<ul>"+m.replace(/\n/g,"")+"</ul>")
    .replace(/\n{2,}/g,"<br><br>").replace(/\n/g,"<br>");
-  return s.replace(/(?:<br>)*\u0000(\d+)\u0000(?:<br>)*/g,(m,i)=>box(bl[+i][0],bl[+i][1]));
+  return s.replace(/(?:<br>)*\u0000(\d+)\u0000(?:<br>)*/g,(m,i,off,str)=>{const l=bl[+i][0],c=bl[+i][1],last=!str.slice(off+m.length).replace(/<br>/g,"").trim();
+    return(last&&l!=="\u0001table"&&!/^chart$/i.test(l)&&isFU(c))?fuHTML(c):box(l,c)});
 }
 
 function add(role,html,raw){
